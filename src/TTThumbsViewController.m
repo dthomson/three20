@@ -2,7 +2,7 @@
 #import "Three20/TTPhotoViewController.h"
 #import "Three20/TTURLRequest.h"
 #import "Three20/TTUnclippedView.h"
-#import "Three20/TTTableField.h"
+#import "Three20/TTTableItem.h"
 #import "Three20/TTURLCache.h"
 #import "Three20/TTStyleSheet.h"
 
@@ -126,12 +126,12 @@ static CGFloat kThumbnailRowHeight = 79;
 
 - (id)tableView:(UITableView*)tableView objectForRowAtIndexPath:(NSIndexPath*)indexPath {
   if (indexPath.row == [tableView numberOfRowsInSection:0]-1 && self.hasMoreToLoad) {
-    NSString* title = TTLocalizedString(@"Load More Photos...", @"");
-    NSString* subtitle = [NSString stringWithFormat:
+    NSString* text = TTLocalizedString(@"Load More Photos...", @"");
+    NSString* caption = [NSString stringWithFormat:
       TTLocalizedString(@"Showing %d of %d Photos", @""), _controller.photoSource.maxPhotoIndex+1,
       _controller.photoSource.numberOfPhotos];
 
-    return [[[TTMoreButtonTableField alloc] initWithText:title subtitle:subtitle] autorelease];
+    return [TTTableMoreButton itemWithText:text caption:caption];
   } else {
     return [_controller.photoSource photoAtIndex:indexPath.row * kColumnCount];
   }

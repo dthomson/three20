@@ -4,7 +4,8 @@
 #import "ImageTest1Controller.h"
 #import "TableImageTestController.h"
 #import "YouTubeTestController.h"
-#import "TableFieldTestController.h"
+#import "TableItemTestController.h"
+#import "TableControlsTestController.h"
 #import "TableTestController.h"
 #import "SearchTestController.h"
 #import "MessageTestController.h"
@@ -37,14 +38,15 @@
   TTNavigationCenter* nav = [TTNavigationCenter defaultCenter];
   nav.mainViewController = self.navigationController;
   nav.delegate = self;
-  nav.urlSchemes = [NSArray arrayWithObject:@"tt"];
+  nav.URLSchemes = [NSArray arrayWithObject:@"tt"];
   nav.supportsShakeToReload = YES;
   
   [nav addView:@"photoTest1" controller:[PhotoTest1Controller class]];
   [nav addView:@"photoTest2" controller:[PhotoTest2Controller class]];
   [nav addView:@"imageTest1" controller:[ImageTest1Controller class]];
   [nav addView:@"tableTest" controller:[TableTestController class]];
-  [nav addView:@"tableFieldTest" controller:[TableFieldTestController class]];
+  [nav addView:@"tableItemTest" controller:[TableItemTestController class]];
+  [nav addView:@"tableControlsTest" controller:[TableControlsTestController class]];
   [nav addView:@"styledTextTableTest" controller:[StyledTextTableTestController class]];
   [nav addView:@"composerTest" controller:[MessageTestController class]];
   [nav addView:@"searchTest" controller:[SearchTestController class]];
@@ -71,50 +73,34 @@
 - (id<TTTableViewDataSource>)createDataSource {
   return [TTSectionedDataSource dataSourceWithObjects:
     @"Photos",
-    [[[TTTableField alloc] initWithText:@"Photo Browser"
-      url:@"tt://photoTest1"] autorelease],
-    [[[TTTableField alloc] initWithText:@"Photo Thumbnails"
-      url:@"tt://photoTest2"] autorelease],
+    [TTTableTextItem itemWithText:@"Photo Browser" URL:@"tt://photoTest1"],
+    [TTTableTextItem itemWithText:@"Photo Thumbnails" URL:@"tt://photoTest2"],
 
     @"Text Fields",
-    [[[TTTableField alloc] initWithText:@"Message Composer"
-      url:@"tt://composerTest"] autorelease],
-    [[[TTTableField alloc] initWithText:@"Search Bar"
-      url:@"tt://searchTest"] autorelease],
+    [TTTableTextItem itemWithText:@"Message Composer" URL:@"tt://composerTest"],
+    [TTTableTextItem itemWithText:@"Search Bar" URL:@"tt://searchTest"],
 
     @"Styles",
-    [[[TTTableField alloc] initWithText:@"Styled Views"
-      url:@"tt://styleTest"] autorelease],
-    [[[TTTableField alloc] initWithText:@"Styled Labels"
-      url:@"tt://styledTextTest"] autorelease],
+    [TTTableTextItem itemWithText:@"Styled Views" URL:@"tt://styleTest"],
+    [TTTableTextItem itemWithText:@"Styled Labels" URL:@"tt://styledTextTest"],
 
     @"Controls",
-    [[[TTTableField alloc] initWithText:@"Buttons"
-      url:@"tt://buttonTest"] autorelease],
-    [[[TTTableField alloc] initWithText:@"Tabs"
-      url:@"tt://tabBarTest"] autorelease],
+    [TTTableTextItem itemWithText:@"Buttons" URL:@"tt://buttonTest"],
+    [TTTableTextItem itemWithText:@"Tabs" URL:@"tt://tabBarTest"],
 
     @"Tables",
-    [[[TTTableField alloc] initWithText:@"Table States"
-      url:@"tt://tableTest"] autorelease],
-    [[[TTTableField alloc] initWithText:@"Table Cells"
-      url:@"tt://tableFieldTest"] autorelease],
-    [[[TTTableField alloc] initWithText:@"Styled Labels in Table"
-      url:@"tt://styledTextTableTest"] autorelease],
-    [[[TTTableField alloc] initWithText:@"Web Images in Table"
-      url:@"tt://imageTest2"] autorelease],
+    [TTTableTextItem itemWithText:@"Table States" URL:@"tt://tableTest"],
+    [TTTableTextItem itemWithText:@"Table Items" URL:@"tt://tableItemTest"],
+    [TTTableTextItem itemWithText:@"Table Controls" URL:@"tt://tableControlsTest"],
+    [TTTableTextItem itemWithText:@"Styled Labels in Table" URL:@"tt://styledTextTableTest"],
+    [TTTableTextItem itemWithText:@"Web Images in Table" URL:@"tt://imageTest2"],
 
     @"General",
-    [[[TTTableField alloc] initWithText:@"Web Image"
-      url:@"tt://imageTest1"] autorelease],
-    [[[TTTableField alloc] initWithText:@"YouTube Player"
-      url:@"tt://youTubeTest"] autorelease],
-    [[[TTTableField alloc] initWithText:@"Web Browser"
-      url:@"tt://webTest"] autorelease],
-    [[[TTTableField alloc] initWithText:@"Activity Labels"
-      url:@"tt://activityTest"] autorelease],
-    [[[TTTableField alloc] initWithText:@"Scroll View"
-      url:@"tt://scrollViewTest"] autorelease],
+    [TTTableTextItem itemWithText:@"Web Image" URL:@"tt://imageTest1"],
+    [TTTableTextItem itemWithText:@"YouTube Player" URL:@"tt://youTubeTest"],
+    [TTTableTextItem itemWithText:@"Web Browser" URL:@"tt://webTest"],
+    [TTTableTextItem itemWithText:@"Activity Labels" URL:@"tt://activityTest"],
+    [TTTableTextItem itemWithText:@"Scroll View" URL:@"tt://scrollViewTest"],
     nil];
 }
 
@@ -124,14 +110,14 @@
 - (void)willNavigateToObject:(id)object inView:(NSString*)viewType
     withController:(UIViewController*)viewController {
   NSIndexPath* indexPath = self.tableView.indexPathForSelectedRow;
-  TTLinkTableField* field = [self.dataSource tableView:self.tableView
-    objectForRowAtIndexPath:indexPath];
+  TTTableTextItem* item = [self.dataSource tableView:self.tableView
+                                           objectForRowAtIndexPath:indexPath];
   
-  viewController.title = field.text;
+  viewController.title = item.text;
 }
 
-- (BOOL)shouldLoadExternalURL:(NSURL*)url {
-  NSString* message = [NSString stringWithFormat:@"You touched a link to %@", url];
+- (BOOL)shouldLoadExternalURL:(NSURL*)URL {
+  NSString* message = [NSString stringWithFormat:@"You touched a link to %@", URL];
   UIAlertView* alertView = [[[UIAlertView alloc] initWithTitle:@"Link"
     message:message delegate:nil cancelButtonTitle:NSLocalizedString(@"Ok", @"")
     otherButtonTitles:nil] autorelease];

@@ -340,8 +340,8 @@
 // TTTableViewDataSource
 
 - (NSString*)tableView:(UITableView*)tableView labelForObject:(id)object {
-  TTTableField* field = object;
-  return field.text;
+  TTTableTextItem* item = object;
+  return item.text;
 }
 
 - (void)tableView:(UITableView*)tableView prepareCell:(UITableViewCell*)cell
@@ -355,7 +355,7 @@
   [_items release];
 
 //  _items = [[NSMutableArray alloc] initWithObjects:
-//    [[[TTActivityTableField alloc] initWithText:@"Searching..."] autorelease],
+//    [[[TTActivityTableItem alloc] initWithText:@"Searching..."] autorelease],
 //    nil];
 
   if (text.length) {
@@ -364,8 +364,8 @@
     text = [text lowercaseString];
     for (NSString* name in _names) {
       if ([[name lowercaseString] rangeOfString:text].location == 0) {
-        TTTableField* field = [[[TTTableField alloc] initWithText:name url:TT_NULL_URL] autorelease];
-        [_items addObject:field];
+        TTTableItem* item = [TTTableTextItem itemWithText:name URL:TT_NULL_URL];
+        [_items addObject:item];
       }
     }    
   } else {
@@ -387,8 +387,8 @@
       [map setObject:section forKey:letter];
     }
     
-    TTTableField* field = [[[TTTableField alloc] initWithText:name url:TT_NULL_URL] autorelease];
-    [section addObject:field];
+    TTTableItem* item = [TTTableTextItem itemWithText:name URL:TT_NULL_URL];
+    [section addObject:item];
   }
   
   [_items release];

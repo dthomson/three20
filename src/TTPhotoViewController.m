@@ -3,7 +3,6 @@
 #import "Three20/TTURLRequest.h"
 #import "Three20/TTUnclippedView.h"
 #import "Three20/TTPhotoView.h"
-#import "Three20/TTURLRequestQueue.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -52,7 +51,6 @@ static const NSTimeInterval kSlideshowInterval = 2;
 }
 
 - (void)dealloc {
-  [[TTURLRequestQueue mainQueue] cancelRequestsWithDelegate:self];
   [_thumbsController release];
   [_slideshowTimer invalidate];
   _slideshowTimer = nil;
@@ -234,11 +232,11 @@ static const NSTimeInterval kSlideshowInterval = 2;
   if (!_thumbsController) {
     _thumbsController = [[self createThumbsViewController] retain];
     _thumbsController.delegate = self;
-    _thumbsController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]
-    initWithCustomView:[[[UIView alloc] initWithFrame:CGRectZero] autorelease]];
-    _thumbsController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
+    _thumbsController.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc]
+    initWithCustomView:[[[UIView alloc] initWithFrame:CGRectZero] autorelease]] autorelease];
+    _thumbsController.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc]
     initWithTitle:TTLocalizedString(@"Done", @"") style:UIBarButtonItemStyleBordered
-    target:self action:@selector(hideThumbnails)];
+    target:self action:@selector(hideThumbnails)] autorelease];
   }
   
   _thumbsController.photoSource = _photoSource;
