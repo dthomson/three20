@@ -118,6 +118,10 @@ typedef enum {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+#define TT_RELEASE_MEMBER(__POINTER) { [__POINTER release]; __POINTER = nil; }
+
+#define TT_RELEASE_TIMER(__TIMER) { [__TIMER invalidate]; __TIMER = nil; }
+
 /**
  * Creates a mutable array which does not retain references to the objects it contains.
  */
@@ -132,6 +136,11 @@ NSMutableDictionary* TTCreateNonRetainingDictionary();
  * Tests if an object is an array which is empty.
  */
 BOOL TTIsEmptyArray(NSObject* object);
+
+/**
+ * Tests if an object is an set which is empty.
+ */
+BOOL TTIsEmptySet(NSObject* object);
 
 /**
  * Tests if an object is a string which is empty.
@@ -215,6 +224,8 @@ BOOL TTIsDocumentsURL(NSString* URL);
 NSString* TTPathForBundleResource(NSString* relativePath);
 
 NSString* TTPathForDocumentsResource(NSString* relativePath);
+
+void TTSwizzle(Class cls, SEL originalSel, SEL newSel);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
