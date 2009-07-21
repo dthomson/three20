@@ -42,7 +42,7 @@ static CGFloat kDefaultIconSize = 50;
 }
 
 - (void)dealloc {
-  TT_RELEASE_MEMBER(_item);
+  TT_RELEASE_SAFELY(_item);
 	[super dealloc];
 }
 
@@ -65,7 +65,7 @@ static CGFloat kDefaultIconSize = 50;
       } else {
         self.accessoryType = UITableViewCellAccessoryNone;
       }
-      self.selectionStyle = UITableViewCellSelectionStyleBlue;
+      self.selectionStyle = TTSTYLEVAR(tableSelectionStyle);
     } else {
       self.accessoryType = UITableViewCellAccessoryNone;
       self.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -147,7 +147,7 @@ static CGFloat kDefaultIconSize = 50;
       self.textLabel.textColor = TTSTYLEVAR(linkTextColor);
       self.textLabel.textAlignment = UITextAlignmentCenter;
       self.accessoryType = UITableViewCellAccessoryNone;
-      self.selectionStyle = UITableViewCellSelectionStyleBlue;
+      self.selectionStyle = TTSTYLEVAR(tableSelectionStyle);
     } else if ([object isKindOfClass:[TTTableLink class]]) {
       self.textLabel.font = TTSTYLEVAR(tableFont);
       self.textLabel.textColor = TTSTYLEVAR(linkTextColor);
@@ -334,7 +334,7 @@ static CGFloat kDefaultIconSize = 50;
 }
 
 - (void)dealloc {
-  TT_RELEASE_MEMBER(_spinnerView);
+  TT_RELEASE_SAFELY(_spinnerView);
   [super dealloc];
 }
 
@@ -359,7 +359,7 @@ static CGFloat kDefaultIconSize = 50;
     self.animating = item.isLoading;
 
     self.detailTextLabel.textColor = TTSTYLEVAR(moreLinkTextColor);
-    self.selectionStyle = UITableViewCellSelectionStyleBlue;
+    self.selectionStyle = TTSTYLEVAR(tableSelectionStyle);
   }  
 }
 
@@ -544,7 +544,7 @@ static CGFloat kDefaultIconSize = 50;
 }
 
 - (void)dealloc {
-  TT_RELEASE_MEMBER(_activityLabel);
+  TT_RELEASE_SAFELY(_activityLabel);
   [super dealloc];
 }
 
@@ -610,8 +610,8 @@ static CGFloat kDefaultIconSize = 50;
 }
 
 - (void)dealloc {
-  TT_RELEASE_MEMBER(_item);
-  TT_RELEASE_MEMBER(_errorView);
+  TT_RELEASE_SAFELY(_item);
+  TT_RELEASE_SAFELY(_errorView);
   [super dealloc];
 }
 
@@ -681,7 +681,7 @@ static CGFloat kDefaultIconSize = 50;
 }
 
 - (void)dealloc {
-  TT_RELEASE_MEMBER(_label);
+  TT_RELEASE_SAFELY(_label);
   [super dealloc];
 }
 
@@ -788,8 +788,8 @@ static CGFloat kDefaultIconSize = 50;
 }
 
 - (void)dealloc {
-  TT_RELEASE_MEMBER(_item);
-  TT_RELEASE_MEMBER(_control);
+  TT_RELEASE_SAFELY(_item);
+  TT_RELEASE_SAFELY(_control);
 	[super dealloc];
 }
 
@@ -833,8 +833,8 @@ static CGFloat kDefaultIconSize = 50;
 - (void)setObject:(id)object {
   if (object != _control && object != _item) {
     [_control removeFromSuperview];
-    TT_RELEASE_MEMBER(_control);
-    TT_RELEASE_MEMBER(_item);
+    TT_RELEASE_SAFELY(_control);
+    TT_RELEASE_SAFELY(_item);
     
     if ([object isKindOfClass:[UIView class]]) {
       _control = [object retain];
@@ -880,8 +880,8 @@ static CGFloat kDefaultIconSize = 50;
 }
 
 - (void)dealloc {
-  TT_RELEASE_MEMBER(_item);
-  TT_RELEASE_MEMBER(_view);
+  TT_RELEASE_SAFELY(_item);
+  TT_RELEASE_SAFELY(_view);
 	[super dealloc];
 }
 
@@ -903,8 +903,8 @@ static CGFloat kDefaultIconSize = 50;
 - (void)setObject:(id)object {
   if (object != _view && object != _item) {
     [_view removeFromSuperview];
-    TT_RELEASE_MEMBER(_view);
-    TT_RELEASE_MEMBER(_item);
+    TT_RELEASE_SAFELY(_view);
+    TT_RELEASE_SAFELY(_item);
     
     if ([object isKindOfClass:[UIView class]]) {
       _view = [object retain];

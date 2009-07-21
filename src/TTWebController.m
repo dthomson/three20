@@ -47,12 +47,15 @@
     _forwardButton = nil;
     _stopButton = nil;
     _refreshButton = nil;
+      
+    self.hidesBottomBarWhenPushed = YES;
   }
   return self;
 }
 
 - (void)dealloc {
-  [_headerView release];
+  TT_RELEASE_SAFELY(_loadingURL);
+  TT_RELEASE_SAFELY(_headerView);  
   [super dealloc];
 }
 
@@ -110,20 +113,32 @@
 
 - (void)unloadView {
   [super unloadView];
-  [_webView release];
-  _webView = nil;
-  [_toolbar release];
-  _toolbar = nil;
-  [_backButton release];
-  _backButton = nil;
-  [_forwardButton release];
-  _forwardButton = nil;
-  [_refreshButton release];
-  _refreshButton = nil;
-  [_stopButton release];
-  _stopButton = nil;
-  [_activityItem release];
-  _activityItem = nil;
+  [super viewDidUnload];
+  _webView.delegate = nil;
+  TT_RELEASE_SAFELY(_webView);
+  TT_RELEASE_SAFELY(_toolbar);
+  TT_RELEASE_SAFELY(_backButton);
+  TT_RELEASE_SAFELY(_forwardButton);
+  TT_RELEASE_SAFELY(_refreshButton);
+  TT_RELEASE_SAFELY(_stopButton);
+  TT_RELEASE_SAFELY(_activityItem);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// UTViewController (TTCategory)
+
+- (void)persistView:(NSMutableDictionary*)state {
+  NSString* URL = self.URL.absoluteString;
+  if (URL) {
+    [state setObject:URL forKey:@"URL"];
+  }
+}
+
+- (void)restoreView:(NSDictionary*)state {
+  NSString* URL = [state objectForKey:@"URL"];
+  if (URL) {
+    [self openURL:[NSURL URLWithString:URL]];
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -131,6 +146,8 @@
 
 - (BOOL)webView:(UIWebView*)webView shouldStartLoadWithRequest:(NSURLRequest*)request
         navigationType:(UIWebViewNavigationType)navigationType {
+  [_loadingURL release];
+  _loadingURL = [request.URL retain];
   return YES;
 }
 
@@ -144,6 +161,7 @@
 
 
 - (void)webViewDidFinishLoad:(UIWebView*)webView {
+TT_RELEASE_SAFELY(_loadingURL);
   self.title = [_webView stringByEvaluatingJavaScriptFromString:@"document.title"];
   self.navigationItem.rightBarButtonItem = nil;
   [_toolbar replaceItemWithTag:3 withItem:_refreshButton];
@@ -151,6 +169,7 @@
 }
 
 - (void)webView:(UIWebView*)webView didFailLoadWithError:(NSError*)error {
+  TT_RELEASE_SAFELY(_loadingURL);
   [self webViewDidFinishLoad:webView];
 }
 
@@ -159,14 +178,14 @@
 
 - (void)actionSheet:(UIActionSheet*)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
   if (buttonIndex == 0) {
-    [[UIApplication sharedApplication] openURL:_webView.request.URL];
+    [[UIApplication sharedApplication] openURL:self.URL];
   }
 }
  
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (NSURL*)URL {
-  return _webView.request.URL;
+  return _loadingURL ? _loadingURL : _webView.request.URL;
 }
 
 - (void)openRequest:(NSURLRequest*)request {
