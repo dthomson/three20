@@ -354,7 +354,7 @@ static const NSTimeInterval kSlideshowInterval = 2;
   _toolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth
                               | UIViewAutoresizingFlexibleTopMargin;
   _toolbar.items = [NSArray arrayWithObjects:
-    space, _previousButton, space, _nextButton, space, nil];
+    space, _previousButton, space, playButton, space, _nextButton, space, nil];
   [_innerView addSubview:_toolbar];      
 }
 
