@@ -5,10 +5,10 @@
 #import "Three20/TTPhotoView.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+// global
 
 static const NSTimeInterval kPhotoLoadLongDelay = 0.5;
 static const NSTimeInterval kPhotoLoadShortDelay = 0.25;
-
 static const NSTimeInterval kSlideshowInterval = 2;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -16,55 +16,10 @@ static const NSTimeInterval kSlideshowInterval = 2;
 @implementation TTPhotoViewController
 
 @synthesize photoSource = _photoSource, centerPhoto = _centerPhoto,
-  centerPhotoIndex = _centerPhotoIndex, defaultImage = _defaultImage;
-
-- (id)init {
-  if (self = [super init]) {
-    _photoSource = nil;
-    _centerPhoto = nil;
-    _centerPhotoIndex = 0;
-    _scrollView = nil;
-    _photoStatusView = nil;
-    _toolbar = nil;
-    _nextButton = nil;
-    _previousButton = nil;
-    _statusText = nil;
-    _thumbsController = nil;
-    _slideshowTimer = nil;
-    _loadTimer = nil;
-    _delayLoad = NO;
-    self.defaultImage = TTIMAGE(@"bundle://Three20.bundle/images/photoDefault.png");
-    
-    self.hidesBottomBarWhenPushed = YES;
-    self.navigationItem.backBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:
-      TTLocalizedString(@"Photo", @"Title for back button that returns to photo browser")
-      style:UIBarButtonItemStylePlain target:nil action:nil] autorelease];
-    self.navigationBarStyle = UIBarStyleBlackTranslucent;
-    self.navigationBarTintColor = nil;
-    self.statusBarStyle = UIStatusBarStyleBlackTranslucent;
-    
-    if ([self respondsToSelector:@selector(setWantsFullScreenLayout:)]) {
-      [self setWantsFullScreenLayout:YES];
-    }
-  }
-  return self;
-}
-
-- (void)dealloc {
-  [_thumbsController release];
-  [_slideshowTimer invalidate];
-  _slideshowTimer = nil;
-  [_loadTimer invalidate];
-  _loadTimer = nil;
-  [_centerPhoto release];
-  [_photoSource.delegates removeObject:self];
-  [_photoSource release];
-  [_statusText release];
-  [_defaultImage release];
-  [super dealloc];
-}
+  centerPhotoIndex = _centerPhotoIndex, defaultImage = _defaultImage, captionStyle = _captionStyle;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+// private
 
 - (TTPhotoView*)centerPhotoView {
   return (TTPhotoView*)_scrollView.centerPage;
@@ -88,7 +43,7 @@ static const NSTimeInterval kSlideshowInterval = 2;
 
 - (void)loadImages {
   TTPhotoView* centerPhotoView = self.centerPhotoView;
-  for (TTPhotoView* photoView in [_scrollView.visiblePages objectEnumerator]) {
+  for (TTPhotoView* photoView in _scrollView.visiblePages.objectEnumerator) {
     if (photoView == centerPhotoView) {
       [photoView loadPreview:NO];
     } else {
@@ -132,7 +87,7 @@ static const NSTimeInterval kSlideshowInterval = 2;
   UIBarButtonItem* playButton = [_toolbar itemWithTag:1];
   playButton.enabled = _photoSource.numberOfPhotos > 1;
   _previousButton.enabled = _centerPhotoIndex > 0;
-  _nextButton.enabled = _centerPhotoIndex < _photoSource.numberOfPhotos-1;
+  _nextButton.enabled = _centerPhotoIndex >= 0 && _centerPhotoIndex < _photoSource.numberOfPhotos-1;
 }
 
 - (void)updatePhotoView {
@@ -140,10 +95,15 @@ static const NSTimeInterval kSlideshowInterval = 2;
   [self loadImages];
 }
 
+- (void)moveToPhoto:(id<TTPhoto>)photo {
+  id<TTPhoto> previousPhoto = [_centerPhoto autorelease];
+  _centerPhoto = [photo retain];
+  [self didMoveToPhoto:_centerPhoto fromPhoto:previousPhoto];
+}
+
 - (void)moveToPhotoAtIndex:(NSInteger)photoIndex withDelay:(BOOL)withDelay {
   _centerPhotoIndex = photoIndex == TT_NULL_PHOTO_INDEX ? 0 : photoIndex;
-  [_centerPhoto release];
-  _centerPhoto = [[_photoSource photoAtIndex:_centerPhotoIndex] retain];
+  [self moveToPhoto:[_photoSource photoAtIndex:_centerPhotoIndex]];
   _delayLoad = withDelay;
 }
 
@@ -224,7 +184,7 @@ static const NSTimeInterval kSlideshowInterval = 2;
 
 - (void)showCaptions:(BOOL)show {
   for (TTPhotoView* photoView in [_scrollView.visiblePages objectEnumerator]) {
-    photoView.captionHidden = !show;
+    photoView.hidesCaption = !show;
   }
 }
 
@@ -298,21 +258,61 @@ static const NSTimeInterval kSlideshowInterval = 2;
 }
 
 - (void)showBarsAnimationDidStop {
-  if (![self respondsToSelector:@selector(setWantsFullScreenLayout:)]) {
-    _innerView.top = -CHROME_HEIGHT;
-    self.view.top = TOOLBAR_HEIGHT;
-    self.view.height -= TOOLBAR_HEIGHT;
-  }
   self.navigationController.navigationBarHidden = NO;
 }
 
 - (void)hideBarsAnimationDidStop {
-  if (![self respondsToSelector:@selector(setWantsFullScreenLayout:)]) {
-    _innerView.top = -STATUS_HEIGHT;
-    self.view.top = 0;
-    self.view.height += TOOLBAR_HEIGHT;
-  }
   self.navigationController.navigationBarHidden = YES;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// NSObject
+
+- (id)init {
+  if (self = [super init]) {
+    _photoSource = nil;
+    _centerPhoto = nil;
+    _centerPhotoIndex = 0;
+    _scrollView = nil;
+    _photoStatusView = nil;
+    _toolbar = nil;
+    _defaultImage = nil;
+    _captionStyle = nil;
+    _nextButton = nil;
+    _previousButton = nil;
+    _statusText = nil;
+    _thumbsController = nil;
+    _slideshowTimer = nil;
+    _loadTimer = nil;
+    _delayLoad = NO;
+    
+    self.navigationItem.backBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:
+      TTLocalizedString(@"Photo", @"Title for back button that returns to photo browser")
+      style:UIBarButtonItemStylePlain target:nil action:nil] autorelease];
+
+    self.statusBarStyle = UIStatusBarStyleBlackTranslucent;
+    self.navigationBarStyle = UIBarStyleBlackTranslucent;
+    self.navigationBarTintColor = nil;
+    self.wantsFullScreenLayout = YES;
+    self.hidesBottomBarWhenPushed = YES;
+
+    self.defaultImage = TTIMAGE(@"bundle://Three20.bundle/images/photoDefault.png");
+  }
+  return self;
+}
+
+- (void)dealloc {
+  _thumbsController.delegate = nil;
+  TT_RELEASE_TIMER(_slideshowTimer);
+  TT_RELEASE_TIMER(_loadTimer);
+  TT_RELEASE_SAFELY(_thumbsController);
+  TT_RELEASE_SAFELY(_centerPhoto);
+  [_photoSource.delegates removeObject:self];
+  TT_RELEASE_SAFELY(_photoSource);
+  TT_RELEASE_SAFELY(_statusText);
+  TT_RELEASE_SAFELY(_captionStyle);
+  TT_RELEASE_SAFELY(_defaultImage);
+  [super dealloc];
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -320,11 +320,10 @@ static const NSTimeInterval kSlideshowInterval = 2;
 
 - (void)loadView {
   CGRect screenFrame = [UIScreen mainScreen].bounds;
-  self.view = [[[TTUnclippedView alloc] initWithFrame:screenFrame] autorelease];
+  self.view = [[[UIView alloc] initWithFrame:screenFrame] autorelease];
     
-  CGFloat y = [self respondsToSelector:@selector(setWantsFullScreenLayout:)] ? 0 : -CHROME_HEIGHT;
-  CGRect innerFrame = CGRectMake(0, y,
-                                 screenFrame.size.width, screenFrame.size.height + CHROME_HEIGHT);
+  CGRect innerFrame = CGRectMake(0, 0,
+                                 screenFrame.size.width, screenFrame.size.height);
   _innerView = [[UIView alloc] initWithFrame:innerFrame];
   [self.view addSubview:_innerView];
   
@@ -349,38 +348,22 @@ static const NSTimeInterval kSlideshowInterval = 2;
    UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease];
 
   _toolbar = [[UIToolbar alloc] initWithFrame:
-    CGRectMake(0, screenFrame.size.height - TOOLBAR_HEIGHT, screenFrame.size.width, TOOLBAR_HEIGHT)];
+    CGRectMake(0, screenFrame.size.height - TT_ROW_HEIGHT,
+               screenFrame.size.width, TT_ROW_HEIGHT)];
   _toolbar.barStyle = self.navigationBarStyle;
+  _toolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth
+                              | UIViewAutoresizingFlexibleTopMargin;
   _toolbar.items = [NSArray arrayWithObjects:
     space, _previousButton, space, _nextButton, space, nil];
-  [_innerView addSubview:_toolbar];    
+  [_innerView addSubview:_toolbar];      
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-  [super viewDidAppear:animated];
-
-  if (![self respondsToSelector:@selector(setWantsFullScreenLayout:)]) {
-    if (!self.nextViewController) {
-      self.view.superview.frame = CGRectOffset(self.view.superview.frame, 0, TOOLBAR_HEIGHT);
-    }
-  
-    [self hideBarsAnimationDidStop];
-    [self showBarsAnimationDidStop];
-    if (!_toolbar.alpha) {
-      [self hideBarsAnimationDidStop];
-    }
-  }
-}
 
 - (void)viewWillDisappear:(BOOL)animated {
   [super viewWillDisappear:animated];
 
   [self pauseAction];
 
-  if (![self respondsToSelector:@selector(setWantsFullScreenLayout:)]) {
-    self.view.superview.frame = CGRectOffset(self.view.superview.frame, 0, TOOLBAR_HEIGHT);
-    self.view.frame = CGRectOffset(self.view.frame, 0, -TOOLBAR_HEIGHT);
-  }
   if (self.nextViewController) {
     [self showBars:YES animated:NO];
   }
@@ -482,20 +465,14 @@ static const NSTimeInterval kSlideshowInterval = 2;
 }
 
 - (void)unloadView {
-  [_innerView release];
-  _innerView = nil;
   _scrollView.delegate = nil;
   _scrollView.dataSource = nil;
-  [_scrollView release];
-  _scrollView = nil;
-  [_photoStatusView release];
-  _photoStatusView = nil;
-  [_nextButton release];
-  _nextButton = nil;
-  [_previousButton release];
-  _previousButton = nil;
-  [_toolbar release];
-  _toolbar = nil;
+  TT_RELEASE_SAFELY(_innerView);
+  TT_RELEASE_SAFELY(_scrollView);
+  TT_RELEASE_SAFELY(_photoStatusView);
+  TT_RELEASE_SAFELY(_nextButton);
+  TT_RELEASE_SAFELY(_previousButton);
+  TT_RELEASE_SAFELY(_toolbar);
 }
 
 - (NSString*)titleForActivity {
@@ -584,11 +561,11 @@ static const NSTimeInterval kSlideshowInterval = 2;
 }
 
 - (void)scrollViewWillRotate:(TTScrollView*)scrollView toOrientation:(UIInterfaceOrientation)orientation {
-  self.centerPhotoView.extrasHidden = YES;
+  self.centerPhotoView.hidesExtras = YES;
 }
 
 - (void)scrollViewDidRotate:(TTScrollView*)scrollView {
-  self.centerPhotoView.extrasHidden = NO;
+  self.centerPhotoView.hidesExtras = NO;
 }
 
 - (BOOL)scrollViewShouldZoom:(TTScrollView*)scrollView {
@@ -596,11 +573,11 @@ static const NSTimeInterval kSlideshowInterval = 2;
 }
 
 - (void)scrollViewDidBeginZooming:(TTScrollView*)scrollView {
-  self.centerPhotoView.extrasHidden = YES;
+  self.centerPhotoView.hidesExtras = YES;
 }
 
 - (void)scrollViewDidEndZooming:(TTScrollView*)scrollView {
-  self.centerPhotoView.extrasHidden = NO;
+  self.centerPhotoView.hidesExtras = NO;
 }
 
 - (void)scrollView:(TTScrollView*)scrollView tapped:(UITouch*)touch {
@@ -622,8 +599,9 @@ static const NSTimeInterval kSlideshowInterval = 2;
   TTPhotoView* photoView = (TTPhotoView*)[_scrollView dequeueReusablePage];
   if (!photoView) {
     photoView = [self createPhotoView];
+    photoView.captionStyle = _captionStyle;
     photoView.defaultImage = _defaultImage;
-    photoView.captionHidden = _toolbar.alpha == 0;
+    photoView.hidesCaption = _toolbar.alpha == 0;
   }
 
   id<TTPhoto> photo = [_photoSource photoAtIndex:pageIndex];
@@ -679,6 +657,9 @@ static const NSTimeInterval kSlideshowInterval = 2;
 
 - (TTThumbsViewController*)createThumbsViewController {
   return [[[TTThumbsViewController alloc] init] autorelease];
+}
+
+- (void)didMoveToPhoto:(id<TTPhoto>)photo fromPhoto:(id<TTPhoto>)fromPhoto {
 }
 
 @end

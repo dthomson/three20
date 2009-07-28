@@ -188,6 +188,7 @@ static const CGFloat kCancelHighlightThreshold = 4;
     _text = [text retain];
     _text.delegate = self;
     _text.font = _font;
+    [self setNeedsLayout];
     [self setNeedsDisplay];
   }
 }

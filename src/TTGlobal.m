@@ -63,12 +63,12 @@ CGRect TTApplicationFrame() {
 
 CGRect TTNavigationFrame() {
   CGRect frame = [UIScreen mainScreen].applicationFrame;
-  return CGRectMake(0, 0, frame.size.width, frame.size.height - TOOLBAR_HEIGHT);
+  return CGRectMake(0, 0, frame.size.width, frame.size.height - TT_ROW_HEIGHT);
 }
 
 CGRect TTToolbarNavigationFrame() {
   CGRect frame = [UIScreen mainScreen].applicationFrame;
-  return CGRectMake(0, 0, frame.size.width, frame.size.height - TOOLBAR_HEIGHT*2);
+  return CGRectMake(0, 0, frame.size.width, frame.size.height - TT_ROW_HEIGHT*2);
 }
 
 CGRect TTRectContract(CGRect rect, CGFloat dx, CGFloat dy) {
@@ -136,6 +136,30 @@ NSString* TTLocalizedString(NSString* key, NSString* comment) {
   return [bundle localizedStringForKey:key value:key table:nil];
 }
 
+NSString* TTFormatInteger(NSInteger num) {
+  NSNumber* number = [NSNumber numberWithInt:num];
+  NSNumberFormatter* formatter = [[NSNumberFormatter alloc] init];
+  [formatter setNumberStyle:kCFNumberFormatterDecimalStyle];
+  [formatter setGroupingSeparator:@","];
+  NSString* formatted = [formatter stringForObjectValue:number];
+  [formatter release];
+  return formatted;
+}
+
+NSString* TTDescriptionForError(NSError* error) {
+  TTLOG(@"ERROR %@", error);
+  if ([error.domain isEqualToString:NSURLErrorDomain]) {
+    if (error.code == NSURLErrorTimedOut) {
+      return TTLocalizedString(@"Connection Timed Out", @"");
+    } else if (error.code == NSURLErrorNotConnectedToInternet) {
+      return TTLocalizedString(@"No Internet Connection", @"");
+    } else {
+      return TTLocalizedString(@"Connection Error", @"");
+    }
+  }
+  return TTLocalizedString(@"Error", @"");
+}
+
 BOOL TTIsBundleURL(NSString* URL) {
   if (URL.length >= 9) {
     return [URL rangeOfString:@"bundle://" options:0 range:NSMakeRange(0,9)].location == 0;
@@ -166,7 +190,7 @@ NSString* TTPathForDocumentsResource(NSString* relativePath) {
   return [documentsPath stringByAppendingPathComponent:relativePath];
 }
 
-void TTSwizzle(Class cls, SEL originalSel, SEL newSel) {
+void TTSwapMethods(Class cls, SEL originalSel, SEL newSel) {
   Method originalMethod = class_getInstanceMethod(cls, originalSel);
   Method newMethod = class_getInstanceMethod(cls, newSel);
   method_exchangeImplementations(originalMethod, newMethod);

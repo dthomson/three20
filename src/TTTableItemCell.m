@@ -318,7 +318,7 @@ static CGFloat kDefaultIconSize = 50;
 
 + (CGFloat)tableView:(UITableView*)tableView rowHeightForItem:(id)item {
   CGFloat height = [super tableView:tableView rowHeightForItem:item];
-  CGFloat minHeight = TOOLBAR_HEIGHT*1.5;
+  CGFloat minHeight = TT_ROW_HEIGHT*1.5;
   if (height < minHeight) {
     return minHeight;
   } else {
@@ -760,15 +760,15 @@ static CGFloat kDefaultIconSize = 50;
       CGFloat lineHeight = (textView.font.ascender - textView.font.descender) + 1;
       height = lineHeight * kDefaultTextViewLines;
     } else if ([view isKindOfClass:[UITextField class]]) {
-      height = TOOLBAR_HEIGHT;
+      height = TT_ROW_HEIGHT;
     } else {
       [view sizeToFit];
       height = view.height;
     }
   }
   
-  if (height < TOOLBAR_HEIGHT) {
-    return TOOLBAR_HEIGHT;
+  if (height < TT_ROW_HEIGHT) {
+    return TT_ROW_HEIGHT;
   } else {
     return height;
   }
@@ -863,7 +863,7 @@ static CGFloat kDefaultIconSize = 50;
 // class public
 
 + (CGFloat)tableView:(UITableView*)tableView rowHeightForItem:(id)item {
-  return TOOLBAR_HEIGHT;
+  return TT_ROW_HEIGHT;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

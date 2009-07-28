@@ -164,8 +164,8 @@ static const CGFloat kIndexViewMargin = 4;
 - (CGSize)sizeThatFits:(CGSize)size {
   CGSize fontSize = [@"M" sizeWithFont:self.font];
   CGFloat height = fontSize.height+kPaddingY*2;
-  if (height < TOOLBAR_HEIGHT) {
-    height = TOOLBAR_HEIGHT;
+  if (height < TT_ROW_HEIGHT) {
+    height = TT_ROW_HEIGHT;
   }
   return CGSizeMake(size.width, height);
 }

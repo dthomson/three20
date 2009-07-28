@@ -5,6 +5,7 @@
 #import "Three20/NSDateAdditions.h"
 #import "Three20/NSArrayAdditions.h"
 #import "Three20/UIColorAdditions.h"
+#import "Three20/UIFontAdditions.h"
 #import "Three20/UIImageAdditions.h"
 #import "Three20/UIViewControllerAdditions.h"
 #import "Three20/UIViewAdditions.h"
@@ -48,10 +49,10 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Dimensions of common iPhone OS Views
 
-#define STATUS_HEIGHT 20
-#define TOOLBAR_HEIGHT 44
-#define KEYBOARD_HEIGHT 216
-#define CHROME_HEIGHT (STATUS_HEIGHT + TOOLBAR_HEIGHT)
+#define TT_STATUS_HEIGHT 20
+#define TT_ROW_HEIGHT 44
+#define TT_KEYBOARD_HEIGHT 216
+#define TT_CHROME_HEIGHT (TT_STATUS_HEIGHT + TT_ROW_HEIGHT)
 #define TABLE_GROUPED_PADDING 10
 #define TT_ROUNDED -1
 
@@ -217,6 +218,10 @@ NSLocale* TTCurrentLocale();
  */
 NSString* TTLocalizedString(NSString* key, NSString* comment);
 
+NSString* TTDescriptionForError(NSError* error);
+
+NSString* TTFormatInteger(NSInteger num);
+
 BOOL TTIsBundleURL(NSString* URL);
 
 BOOL TTIsDocumentsURL(NSString* URL);
@@ -225,7 +230,7 @@ NSString* TTPathForBundleResource(NSString* relativePath);
 
 NSString* TTPathForDocumentsResource(NSString* relativePath);
 
-void TTSwizzle(Class cls, SEL originalSel, SEL newSel);
+void TTSwapMethods(Class cls, SEL originalSel, SEL newSel);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 

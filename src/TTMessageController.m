@@ -319,13 +319,13 @@
   self.view.backgroundColor = TTSTYLEVAR(backgroundColor);
   
   _navigationBar = [[UINavigationBar alloc] initWithFrame:
-    CGRectMake(0, 0, appFrame.size.width, TOOLBAR_HEIGHT)];
+    CGRectMake(0, 0, appFrame.size.width, TT_ROW_HEIGHT)];
   _navigationBar.tintColor = TTSTYLEVAR(navigationBarTintColor);
   [_navigationBar pushNavigationItem:self.navigationItem animated:NO];
   [self.view addSubview:_navigationBar];
 
-  CGRect innerFrame = CGRectMake(0, TOOLBAR_HEIGHT,
-    appFrame.size.width, appFrame.size.height - (TOOLBAR_HEIGHT+KEYBOARD_HEIGHT));
+  CGRect innerFrame = CGRectMake(0, TT_ROW_HEIGHT,
+    appFrame.size.width, appFrame.size.height - (TT_ROW_HEIGHT+TT_KEYBOARD_HEIGHT));
   if (TTOSVersionIsAtLeast(3.0)) {
     _scrollView = [[[UIScrollView class] alloc] initWithFrame:innerFrame];
   } else {

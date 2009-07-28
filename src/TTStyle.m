@@ -431,8 +431,9 @@ static const NSInteger kDefaultLightSource = 125;
 @implementation TTTextStyle
 
 @synthesize font = _font, color = _color, shadowColor = _shadowColor, shadowOffset = _shadowOffset,
-            minimumFontSize = _minimumFontSize, textAlignment = _textAlignment,
-            verticalAlignment = _verticalAlignment, lineBreakMode = _lineBreakMode;
+            minimumFontSize = _minimumFontSize, numberOfLines = _numberOfLines,
+            textAlignment = _textAlignment, verticalAlignment = _verticalAlignment,
+            lineBreakMode = _lineBreakMode;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // class public
@@ -489,6 +490,26 @@ static const NSInteger kDefaultLightSource = 125;
   return style;
 }
 
++ (TTTextStyle*)styleWithFont:(UIFont*)font color:(UIColor*)color
+                minimumFontSize:(CGFloat)minimumFontSize
+                shadowColor:(UIColor*)shadowColor shadowOffset:(CGSize)shadowOffset
+                textAlignment:(UITextAlignment)textAlignment
+                verticalAlignment:(UIControlContentVerticalAlignment)verticalAlignment
+                lineBreakMode:(UILineBreakMode)lineBreakMode numberOfLines:(NSInteger)numberOfLines
+                next:(TTStyle*)next {
+  TTTextStyle* style = [[[self alloc] initWithNext:next] autorelease];
+  style.font = font;
+  style.color = color;
+  style.minimumFontSize = minimumFontSize;
+  style.shadowColor = shadowColor;
+  style.shadowOffset = shadowOffset;
+  style.textAlignment = textAlignment;
+  style.verticalAlignment = verticalAlignment;
+  style.lineBreakMode = lineBreakMode;
+  style.numberOfLines = numberOfLines;
+  return style;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // private
 
@@ -521,6 +542,14 @@ static const NSInteger kDefaultLightSource = 125;
   return rect;
 }
 
+- (CGSize)sizeOfText:(NSString*)text withFont:(UIFont*)font size:(CGSize)size {
+  if (_numberOfLines == 1) {
+    return [text sizeWithFont:font];
+  } else {
+    return [text sizeWithFont:font constrainedToSize:size lineBreakMode:_lineBreakMode];
+  }
+}
+
 - (void)drawText:(NSString*)text context:(TTStyleContext*)context {
   CGContextRef ctx = UIGraphicsGetCurrentContext();
   CGContextSaveGState(ctx);
@@ -537,15 +566,21 @@ static const NSInteger kDefaultLightSource = 125;
   }
 
   CGRect rect = context.contentFrame;
-  CGRect titleRect = [self rectForText:text forSize:rect.size withFont:font];
   
-  titleRect.size = [text drawAtPoint:
-        CGPointMake(titleRect.origin.x+rect.origin.x, titleRect.origin.y+rect.origin.y)
-        forWidth:rect.size.width withFont:font
-        minFontSize:_minimumFontSize ? _minimumFontSize : font.pointSize
-        actualFontSize:nil lineBreakMode:_lineBreakMode
-        baselineAdjustment:UIBaselineAdjustmentAlignCenters];
-  context.contentFrame = titleRect;
+  if (_numberOfLines == 1) {
+    CGRect titleRect = [self rectForText:text forSize:rect.size withFont:font];
+    titleRect.size = [text drawAtPoint:
+          CGPointMake(titleRect.origin.x+rect.origin.x, titleRect.origin.y+rect.origin.y)
+          forWidth:rect.size.width withFont:font
+          minFontSize:_minimumFontSize ? _minimumFontSize : font.pointSize
+          actualFontSize:nil lineBreakMode:_lineBreakMode
+          baselineAdjustment:UIBaselineAdjustmentAlignCenters];
+    context.contentFrame = titleRect;
+  } else {
+    rect.size = [text drawInRect:rect withFont:font lineBreakMode:_lineBreakMode
+                      alignment:_textAlignment];
+    context.contentFrame = rect;
+  }
 
   CGContextRestoreGState(ctx);
 }
@@ -560,6 +595,7 @@ static const NSInteger kDefaultLightSource = 125;
     _minimumFontSize = 0;
     _shadowColor = nil;
     _shadowOffset = CGSizeZero;
+    _numberOfLines = 1;
     _textAlignment = UITextAlignmentCenter;
     _verticalAlignment = UIControlContentVerticalAlignmentCenter;
     _lineBreakMode = UILineBreakModeTailTruncation;
@@ -568,9 +604,9 @@ static const NSInteger kDefaultLightSource = 125;
 }
 
 - (void)dealloc {
-  [_font release];
-  [_color release];
-  [_shadowColor release];
+  TT_RELEASE_SAFELY(_font);
+  TT_RELEASE_SAFELY(_color);
+  TT_RELEASE_SAFELY(_shadowColor);
   [super dealloc];
 }
 
@@ -600,17 +636,13 @@ static const NSInteger kDefaultLightSource = 125;
     NSString* text = [context.delegate textForLayerWithStyle:self];
     UIFont* font = _font ? _font : context.font;
     
-    CGSize textSize;
-    
     CGFloat maxWidth = context.contentFrame.size.width;
-    if (maxWidth) {
-      textSize = [text sizeWithFont:font];
-      if (textSize.width > maxWidth) {
-        textSize.width = maxWidth;
-      }
-    } else {
-      textSize = [text sizeWithFont:font];
+    if (!maxWidth) {
+      maxWidth = CGFLOAT_MAX;
     }
+    CGFloat maxHeight = _numberOfLines ? _numberOfLines * font.lineHeight : CGFLOAT_MAX;
+    CGSize maxSize = CGSizeMake(maxWidth, maxHeight);
+    CGSize textSize = [self sizeOfText:text withFont:font size:maxSize];
     
     size.width += textSize.width;
     size.height += textSize.height;
@@ -1188,6 +1220,34 @@ static const NSInteger kDefaultLightSource = 125;
   style.top = top;
   style.right = right;
   style.bottom = bottom;
+  style.left = left;
+  style.width = width;
+  return style;
+}
+
++ (TTFourBorderStyle*)styleWithTop:(UIColor*)top width:(CGFloat)width next:(TTStyle*)next {
+  TTFourBorderStyle* style = [[[self alloc] initWithNext:next] autorelease];
+  style.top = top;
+  style.width = width;
+  return style;
+}
+
++ (TTFourBorderStyle*)styleWithRight:(UIColor*)right width:(CGFloat)width next:(TTStyle*)next {
+  TTFourBorderStyle* style = [[[self alloc] initWithNext:next] autorelease];
+  style.right = right;
+  style.width = width;
+  return style;
+}
+
++ (TTFourBorderStyle*)styleWithBottom:(UIColor*)bottom width:(CGFloat)width next:(TTStyle*)next {
+  TTFourBorderStyle* style = [[[self alloc] initWithNext:next] autorelease];
+  style.bottom = bottom;
+  style.width = width;
+  return style;
+}
+
++ (TTFourBorderStyle*)styleWithLeft:(UIColor*)left width:(CGFloat)width next:(TTStyle*)next {
+  TTFourBorderStyle* style = [[[self alloc] initWithNext:next] autorelease];
   style.left = left;
   style.width = width;
   return style;
