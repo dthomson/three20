@@ -52,12 +52,12 @@ static const CGFloat kCancelHighlightThreshold = 4;
 
 - (void)dealloc {
   _text.delegate = nil;
-  [_text release];
-  [_font release];
-  [_textColor release];
-  [_highlightedTextColor release];
-  [_highlightedNode release];
-  [_highlightedFrame release];
+  TT_RELEASE_SAFELY(_text);
+  TT_RELEASE_SAFELY(_font);
+  TT_RELEASE_SAFELY(_textColor);
+  TT_RELEASE_SAFELY(_highlightedTextColor);
+  TT_RELEASE_SAFELY(_highlightedNode);
+  TT_RELEASE_SAFELY(_highlightedFrame);
   [super dealloc];
 }
 
@@ -156,6 +156,10 @@ static const CGFloat kCancelHighlightThreshold = 4;
   [super touchesBegan:touches withEvent:event];
 }
 
+- (void)touchesMoved:(NSSet*)touches withEvent:(UIEvent*)event {
+  [super touchesMoved:touches withEvent:event];
+}
+
 - (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event {
   TTTableView* tableView = (TTTableView*)[self firstParentOfClass:[TTTableView class]];
   if (!tableView) {
@@ -164,11 +168,23 @@ static const CGFloat kCancelHighlightThreshold = 4;
       [self setHighlightedFrame:nil];
     }
   }
-  if (!tableView || TTOSVersionIsAtLeast(3.0)) {
-    // We definitely don't want to call this if the label is inside a TTTableView, because
-    // it winds up calling touchesEnded on the table twice, triggering the link twice
-    [super touchesEnded:touches withEvent:event];
-  }
+    
+  // We definitely don't want to call this if the label is inside a TTTableView, because
+  // it winds up calling touchesEnded on the table twice, triggering the link twice
+  [super touchesEnded:touches withEvent:event];
+}
+
+- (void)touchesCancelled:(NSSet*)touches withEvent:(UIEvent*)event {
+  [super touchesCancelled:touches withEvent:event];
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// UIResponderStandardEditActions
+
+- (void)copy:(id)sender {
+  NSString* text = _text.rootNode.outerText;
+  UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
+  [pasteboard setValue:text forPasteboardType:@"public.utf8-plain-text"];
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

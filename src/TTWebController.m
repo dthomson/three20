@@ -148,12 +148,16 @@
         navigationType:(UIWebViewNavigationType)navigationType {
   [_loadingURL release];
   _loadingURL = [request.URL retain];
+  _backButton.enabled = [_webView canGoBack];
+  _forwardButton.enabled = [_webView canGoForward];    
   return YES;
 }
 
 - (void)webViewDidStartLoad:(UIWebView*)webView {
-  self.title = NSLocalizedString(@"Loading...", @"");
-  self.navigationItem.rightBarButtonItem = _activityItem;
+  self.title = TTLocalizedString(@"Loading...", @"");
+  if (!self.navigationItem.rightBarButtonItem) {
+    [self.navigationItem setRightBarButtonItem:_activityItem animated:YES];
+  }
   [_toolbar replaceItemWithTag:3 withItem:_stopButton];
   _backButton.enabled = [_webView canGoBack];
   _forwardButton.enabled = [_webView canGoForward];
@@ -161,11 +165,16 @@
 
 
 - (void)webViewDidFinishLoad:(UIWebView*)webView {
-TT_RELEASE_SAFELY(_loadingURL);
+  TT_RELEASE_SAFELY(_loadingURL);
+  
   self.title = [_webView stringByEvaluatingJavaScriptFromString:@"document.title"];
-  self.navigationItem.rightBarButtonItem = nil;
+  if (self.navigationItem.rightBarButtonItem == _activityItem) {
+    [self.navigationItem setRightBarButtonItem:nil animated:YES];
+  }
   [_toolbar replaceItemWithTag:3 withItem:_refreshButton];
-  [_webView canGoBack];
+
+  _backButton.enabled = [_webView canGoBack];
+  _forwardButton.enabled = [_webView canGoForward];    
 }
 
 - (void)webView:(UIWebView*)webView didFailLoadWithError:(NSError*)error {

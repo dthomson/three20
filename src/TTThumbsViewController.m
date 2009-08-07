@@ -213,20 +213,22 @@ static CGFloat kThumbnailRowHeight = 79;
 // UIViewController
 
 - (void)loadView {
+    [super loadView];
+
   CGRect screenFrame = [UIScreen mainScreen].bounds;
   self.view = [[[TTUnclippedView alloc] initWithFrame:screenFrame] autorelease];
   self.view.autoresizesSubviews = YES;
 	self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
-  CGFloat y = [self respondsToSelector:@selector(setWantsFullScreenLayout:)] ? 0 : -TT_CHROME_HEIGHT;
+  CGFloat y = [self respondsToSelector:@selector(setWantsFullScreenLayout:)] ? 0 : -TTBarsHeight();
   CGRect innerFrame = CGRectMake(0, y,
-                                 screenFrame.size.width, screenFrame.size.height + TT_CHROME_HEIGHT);
+                                 screenFrame.size.width, screenFrame.size.height + TTBarsHeight());
   UIView* innerView = [[[UIView alloc] initWithFrame:innerFrame] autorelease];
   innerView.backgroundColor = TTSTYLEVAR(backgroundColor);
   [self.view addSubview:innerView];
   
-  CGRect tableFrame = CGRectMake(0, TT_CHROME_HEIGHT,
-                                 screenFrame.size.width, screenFrame.size.height - TT_CHROME_HEIGHT);
+  CGRect tableFrame = CGRectMake(0, TTBarsHeight(),
+                                 screenFrame.size.width, screenFrame.size.height - TTBarsHeight());
   self.tableView = [[[UITableView alloc] initWithFrame:tableFrame
                                          style:UITableViewStylePlain] autorelease];
   self.tableView.rowHeight = kThumbnailRowHeight;

@@ -79,6 +79,9 @@
 
 #define TTSTYLEVAR(_VARNAME) [TTSTYLESHEET _VARNAME]
 
+#define TTLOGVIEWS(_VIEW) \
+  { for (UIView* view = _VIEW; view; view = view.superview) { TTLOG(@"%@", view); } }
+
 #define TTIMAGE(_URL) [[TTURLCache sharedCache] imageForURL:_URL]
 
 typedef enum {
@@ -106,6 +109,16 @@ typedef enum {
 #define TT_DEFAULT_CACHE_EXPIRATION_AGE (60*60*24*7) // 1 week
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+// Time
+
+#define TT_MINUTE 60
+#define TT_HOUR (60*TT_MINUTE)
+#define TT_DAY (24*TT_HOUR)
+#define TT_WEEK (7*TT_DAY)
+#define TT_MONTH (30.5*TT_DAY)
+#define TT_YEAR (365*TT_DAY)
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // Animation
 
 /**
@@ -120,7 +133,7 @@ typedef enum {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define TT_RELEASE_SAFELY(__POINTER) { [__POINTER release]; __POINTER = nil; }
-
+#define TT_AUTORELEASE_SAFELY(__POINTER) { [__POINTER autorelease]; __POINTER = nil; }
 #define TT_RELEASE_TIMER(__TIMER) { [__TIMER invalidate]; __TIMER = nil; }
 
 /**
@@ -173,6 +186,16 @@ CGRect TTNavigationFrame();
 CGRect TTToolbarNavigationFrame();
 
 /**
+ * The height of the area containing the status bar and possibly the in-call status bar.
+ */
+CGFloat TTStatusHeight();
+
+/**
+ * The height of the area containing the status bar and navigation bar.
+ */
+CGFloat TTBarsHeight();
+
+/**
  * Returns a rectangle that is smaller or larger than the source rectangle.
  */
 CGRect TTRectContract(CGRect rect, CGFloat dx, CGFloat dy);
@@ -195,6 +218,12 @@ void TTNetworkRequestStarted();
  * The status bar activity indicator will be spinning while there are active requests.
  */
 void TTNetworkRequestStopped();
+
+/**
+ * A convenient way to show a UIAlertView with a message;
+ */
+void TTAlert(NSString* message);
+void TTAlertError(NSString* message);
 
 /**
  * Gets the current runtime version of iPhone OS.

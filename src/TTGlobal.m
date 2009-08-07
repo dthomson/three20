@@ -71,6 +71,14 @@ CGRect TTToolbarNavigationFrame() {
   return CGRectMake(0, 0, frame.size.width, frame.size.height - TT_ROW_HEIGHT*2);
 }
 
+CGFloat TTStatusHeight() {
+  return [UIScreen mainScreen].applicationFrame.origin.y;
+}
+
+CGFloat TTBarsHeight() {
+  return [UIScreen mainScreen].applicationFrame.origin.y + TT_ROW_HEIGHT;
+}
+
 CGRect TTRectContract(CGRect rect, CGFloat dx, CGFloat dy) {
   return CGRectMake(rect.origin.x, rect.origin.y, rect.size.width - dx, rect.size.height - dy);
 }
@@ -92,6 +100,22 @@ void TTNetworkRequestStopped() {
   if (--gNetworkTaskCount == 0) {
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
   }
+}
+
+void TTAlert(NSString* message) {
+  UIAlertView* alert = [[[UIAlertView alloc] initWithTitle:TTLocalizedString(@"Alert", @"")
+                                             message:message delegate:nil
+                                             cancelButtonTitle:TTLocalizedString(@"OK", @"")
+                                             otherButtonTitles:nil] autorelease];
+  [alert show];
+}
+
+void TTAlertError(NSString* message) {
+  UIAlertView* alert = [[[UIAlertView alloc] initWithTitle:TTLocalizedString(@"Alert", @"")
+                                              message:message delegate:nil
+                                              cancelButtonTitle:TTLocalizedString(@"OK", @"")
+                                              otherButtonTitles:nil] autorelease];
+  [alert show];
 }
 
 float TTOSVersion() {
