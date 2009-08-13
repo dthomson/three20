@@ -33,7 +33,7 @@
  * The maximum number of pixels to keep in memory for cached images.
  *
  * Setting this to zero will allow an unlimited number of images to be cached.  The default
- * is enough to hold roughly 25 small images.
+ * is zero.
  */
 @property(nonatomic) NSUInteger maxPixelCount;
 
@@ -90,9 +90,9 @@
  * @return nil if hthe URL is not cached or if the cache entry is older than the minimum.
  */
 - (NSData*)dataForURL:(NSString*)URL expires:(NSTimeInterval)expirationAge
-  timestamp:(NSDate**)timestamp;
+           timestamp:(NSDate**)timestamp;
 - (NSData*)dataForKey:(NSString*)key expires:(NSTimeInterval)expirationAge
-  timestamp:(NSDate**)timestamp;
+           timestamp:(NSDate**)timestamp;
 
 /**
  * Gets an image from the in-memory image cache.
@@ -126,6 +126,13 @@
  * @return The temporary URL
  */
 - (NSString*)storeTemporaryData:(NSData*)data;
+
+/**
+ * Convenient way to create a temporary URL for a file and move it to the disk cache.
+ *
+ * @return The temporary URL
+ */
+- (NSString*)storeTemporaryFile:(NSURL*)fileURL;
 
 /**
  * Moves the data currently stored under one URL to another URL.

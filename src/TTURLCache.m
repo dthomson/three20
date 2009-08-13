@@ -4,8 +4,6 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
   
-#define TT_SMALL_IMAGE_SIZE (50*50)
-#define TT_MEDIUM_IMAGE_SIZE (130*97)
 #define TT_LARGE_IMAGE_SIZE (600*400)
 
 static NSString* kCacheDirPathName = @"Three20";
@@ -120,7 +118,7 @@ static TTURLCache* gSharedCache = nil;
     _disableDiskCache = NO;
     _disableImageCache = NO;
     _invalidationAge = TT_DEFAULT_CACHE_INVALIDATION_AGE;
-    _maxPixelCount = (TT_SMALL_IMAGE_SIZE*20) + (TT_MEDIUM_IMAGE_SIZE*12);
+    _maxPixelCount = 0;
     _totalPixelCount = 0;
     
     // XXXjoe Disabling the built-in cache may save memory but it also makes UIWebView slow
@@ -128,15 +126,31 @@ static TTURLCache* gSharedCache = nil;
     // diskPath:nil];
     // [NSURLCache setSharedURLCache:sharedCache];
     // [sharedCache release];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                          selector:@selector(didReceiveMemoryWarning:)
+                                          name:UIApplicationDidReceiveMemoryWarningNotification  
+                                          object:nil];  
   }
   return self;
 }
 
 - (void)dealloc {
-  [_imageCache release];
-  [_imageSortedList release];
-  [_cachePath release];
+  [[NSNotificationCenter defaultCenter] removeObserver:self
+                                        name:UIApplicationDidReceiveMemoryWarningNotification  
+                                        object:nil];  
+  TT_RELEASE_SAFELY(_imageCache);
+  TT_RELEASE_SAFELY(_imageSortedList);
+  TT_RELEASE_SAFELY(_cachePath);
   [super dealloc];
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// NSNotifications
+
+- (void)didReceiveMemoryWarning:(void*)object {
+  // Empty the memory cache when memory is low
+  [self removeAll:NO];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -240,6 +254,26 @@ static TTURLCache* gSharedCache = nil;
   return URL;
 }
 
+- (NSString*)storeTemporaryFile:(NSURL*)fileURL {
+  if ([fileURL isFileURL]) {
+    NSString* filePath = [fileURL path];
+    NSFileManager* fm = [NSFileManager defaultManager];
+    if ([fm fileExistsAtPath:filePath]) {
+      NSString* tempURL = nil;
+      NSString* newPath = nil;
+      do {
+        tempURL = [self createTemporaryURL];
+        newPath = [self cachePathForURL:tempURL];
+      } while ([fm fileExistsAtPath:newPath]);
+
+      if ([fm moveItemAtPath:filePath toPath:newPath error:nil]) {
+        return tempURL;
+      }
+    }
+  }
+  return nil;
+}
+
 - (NSString*)storeTemporaryImage:(UIImage*)image toDisk:(BOOL)toDisk {
   NSString* URL = [self createTemporaryURL];
   [self storeImage:image forURL:URL force:YES];
@@ -259,10 +293,10 @@ static TTURLCache* gSharedCache = nil;
     [_imageSortedList addObject:newKey];
     [_imageCache setObject:image forKey:newKey];
   }
-  NSString* oldPath = [self cachePathForURL:oldKey];
+  NSString* oldPath = [self cachePathForKey:oldKey];
   NSFileManager* fm = [NSFileManager defaultManager];
   if ([fm fileExistsAtPath:oldPath]) {
-    NSString* newPath = [self cachePathForURL:newKey];
+    NSString* newPath = [self cachePathForKey:newKey];
     [fm moveItemAtPath:oldPath toPath:newPath error:nil];
   }
 }

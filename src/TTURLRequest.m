@@ -15,7 +15,9 @@ static NSString* kStringBoundary = @"3i2ndDfv2rTHiSisAbouNdArYfORhtTPEefj3q2f";
   httpBody = _httpBody, parameters = _parameters, contentType = _contentType,
   cachePolicy = _cachePolicy, cacheExpirationAge = _cacheExpirationAge, cacheKey = _cacheKey,
   timestamp = _timestamp, userInfo = _userInfo, isLoading = _isLoading,
-  shouldHandleCookies = _shouldHandleCookies, respondedFromCache = _respondedFromCache;
+  shouldHandleCookies = _shouldHandleCookies, totalBytesLoaded = _totalBytesLoaded,
+  totalBytesExpected = _totalBytesExpected, respondedFromCache = _respondedFromCache,
+  headers = _headers;
 
 + (TTURLRequest*)request {
   return [[[TTURLRequest alloc] init] autorelease];
@@ -40,35 +42,39 @@ static NSString* kStringBoundary = @"3i2ndDfv2rTHiSisAbouNdArYfORhtTPEefj3q2f";
     _URL = nil;
     _httpMethod = nil;
     _httpBody = nil;
+    _headers = nil;
     _parameters = nil;
     _contentType = nil;
     _delegates = TTCreateNonRetainingArray();
     _files = nil;
     _response = nil;
-    _cachePolicy = TTURLRequestCachePolicyAny;
+    _cachePolicy = TTURLRequestCachePolicyDefault;
     _cacheExpirationAge = 0;
     _timestamp = nil;
     _cacheKey = nil;
     _userInfo = nil;
     _isLoading = NO;
     _shouldHandleCookies = YES;
+    _totalBytesLoaded = 0;
+    _totalBytesExpected = 0;
     _respondedFromCache = NO;
   }
   return self;
 }
 
 - (void)dealloc {
-  [_URL release];
-  [_httpMethod release];
-  [_httpBody release];
-  [_parameters release];
-  [_contentType release];
-  [_delegates release];
-  [_files release];
-  [_response release];
-  [_timestamp release];
-  [_cacheKey release];
-  [_userInfo release];
+  TT_RELEASE_SAFELY(_URL);
+  TT_RELEASE_SAFELY(_httpMethod);
+  TT_RELEASE_SAFELY(_httpBody);
+  TT_RELEASE_SAFELY(_headers);
+  TT_RELEASE_SAFELY(_parameters);
+  TT_RELEASE_SAFELY(_contentType);
+  TT_RELEASE_SAFELY(_delegates);
+  TT_RELEASE_SAFELY(_files);
+  TT_RELEASE_SAFELY(_response);
+  TT_RELEASE_SAFELY(_timestamp);
+  TT_RELEASE_SAFELY(_cacheKey);
+  TT_RELEASE_SAFELY(_userInfo);
   [super dealloc];
 }
 
@@ -111,7 +117,7 @@ static NSString* kStringBoundary = @"3i2ndDfv2rTHiSisAbouNdArYfORhtTPEefj3q2f";
 
 - (NSData*)generatePostBody {
   NSMutableData *body = [NSMutableData data];
-  NSString *endLine = [NSString stringWithFormat:@"\r\n--%@\r\n", kStringBoundary];
+  NSString *beginLine = [NSString stringWithFormat:@"\r\n--%@\r\n", kStringBoundary];
 
   [body appendData:[[NSString stringWithFormat:@"--%@\r\n", kStringBoundary]
     dataUsingEncoding:NSUTF8StringEncoding]];
@@ -119,11 +125,11 @@ static NSString* kStringBoundary = @"3i2ndDfv2rTHiSisAbouNdArYfORhtTPEefj3q2f";
   for (id key in [_parameters keyEnumerator]) {
     NSString* value = [_parameters valueForKey:key];
     if (![value isKindOfClass:[UIImage class]]) {
+      [body appendData:[beginLine dataUsingEncoding:NSUTF8StringEncoding]];        
       [body appendData:[[NSString
         stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", key]
           dataUsingEncoding:NSUTF8StringEncoding]];
       [body appendData:[value dataUsingEncoding:NSUTF8StringEncoding]];
-      [body appendData:[endLine dataUsingEncoding:NSUTF8StringEncoding]];        
     }
   }
 
@@ -134,8 +140,10 @@ static NSString* kStringBoundary = @"3i2ndDfv2rTHiSisAbouNdArYfORhtTPEefj3q2f";
       CGFloat quality = [TTURLRequestQueue mainQueue].imageCompressionQuality;
       NSData* data = UIImageJPEGRepresentation(image, quality);
       
-      [body appendData:[[NSString
-        stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"image\"\r\n", key]
+      [body appendData:[beginLine dataUsingEncoding:NSUTF8StringEncoding]];
+      [body appendData:[[NSString stringWithFormat:
+                       @"Content-Disposition: form-data; name=\"%@\"; filename=\"image.jpg\"\r\n",
+                       key]
           dataUsingEncoding:NSUTF8StringEncoding]];
       [body appendData:[[NSString
         stringWithFormat:@"Content-Length: %d\r\n", data.length]
@@ -144,7 +152,6 @@ static NSString* kStringBoundary = @"3i2ndDfv2rTHiSisAbouNdArYfORhtTPEefj3q2f";
         stringWithString:@"Content-Type: image/jpeg\r\n\r\n"]
           dataUsingEncoding:NSUTF8StringEncoding]];  
       [body appendData:data];
-      [body appendData:[endLine dataUsingEncoding:NSUTF8StringEncoding]];
       imageKey = key;
     }
   }
@@ -154,16 +161,20 @@ static NSString* kStringBoundary = @"3i2ndDfv2rTHiSisAbouNdArYfORhtTPEefj3q2f";
     NSString* mimeType = [_files objectAtIndex:i+1];
     NSString* fileName = [_files objectAtIndex:i+2];
       
+    [body appendData:[beginLine dataUsingEncoding:NSUTF8StringEncoding]];
     [body appendData:[[NSString stringWithFormat:
-                                 @"Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n", fileName, fileName]
+                       @"Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n",
+                       fileName, fileName]
           dataUsingEncoding:NSUTF8StringEncoding]];
     [body appendData:[[NSString stringWithFormat:@"Content-Length: %d\r\n", data.length]
           dataUsingEncoding:NSUTF8StringEncoding]];  
     [body appendData:[[NSString stringWithFormat:@"Content-Type: %@\r\n\r\n", mimeType]
           dataUsingEncoding:NSUTF8StringEncoding]];  
     [body appendData:data];
-    [body appendData:[endLine dataUsingEncoding:NSUTF8StringEncoding]];
   }
+
+  [body appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n", kStringBoundary]
+                   dataUsingEncoding:NSUTF8StringEncoding]];
 
   // If an image was found, remove it from the dictionary to save memory while we
   // perform the upload
@@ -209,6 +220,13 @@ static NSString* kStringBoundary = @"3i2ndDfv2rTHiSisAbouNdArYfORhtTPEefj3q2f";
     _cacheKey = [[self generateCacheKey] retain];
   }
   return _cacheKey;
+}
+
+- (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field {
+  if (!_headers) {
+    _headers = [[NSMutableDictionary alloc] init];
+  }
+  [_headers setObject:value forKey:field];
 }
 
 - (void)addFile:(NSData*)data mimeType:(NSString*)mimeType fileName:(NSString*)fileName {
@@ -272,8 +290,8 @@ static NSString* kStringBoundary = @"3i2ndDfv2rTHiSisAbouNdArYfORhtTPEefj3q2f";
 }
 
 - (void)dealloc {
-  [_topic release];
-  [_strong release];
+  TT_RELEASE_SAFELY(_topic);
+  TT_RELEASE_SAFELY(_strong);
   [super dealloc];
 }
 
