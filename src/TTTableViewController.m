@@ -61,6 +61,7 @@ static const CGFloat kRefreshingViewHeight = 22;
 
 - (void)dealloc {
   [_tableDelegate release];
+  [_dataSource.delegates removeObject:self];
   [_dataSource release];
   _dataSource = nil;
   [_tableView release];

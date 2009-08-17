@@ -17,7 +17,7 @@ static NSString* kStringBoundary = @"3i2ndDfv2rTHiSisAbouNdArYfORhtTPEefj3q2f";
   timestamp = _timestamp, userInfo = _userInfo, isLoading = _isLoading,
   shouldHandleCookies = _shouldHandleCookies, totalBytesLoaded = _totalBytesLoaded,
   totalBytesExpected = _totalBytesExpected, respondedFromCache = _respondedFromCache,
-  headers = _headers;
+  headers = _headers, credential = _credential;
 
 + (TTURLRequest*)request {
   return [[[TTURLRequest alloc] init] autorelease];
@@ -58,6 +58,7 @@ static NSString* kStringBoundary = @"3i2ndDfv2rTHiSisAbouNdArYfORhtTPEefj3q2f";
     _totalBytesLoaded = 0;
     _totalBytesExpected = 0;
     _respondedFromCache = NO;
+    _credential = nil;
   }
   return self;
 }
@@ -75,6 +76,7 @@ static NSString* kStringBoundary = @"3i2ndDfv2rTHiSisAbouNdArYfORhtTPEefj3q2f";
   TT_RELEASE_SAFELY(_timestamp);
   TT_RELEASE_SAFELY(_cacheKey);
   TT_RELEASE_SAFELY(_userInfo);
+  TT_RELEASE_SAFELY(_credential);
   [super dealloc];
 }
 

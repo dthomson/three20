@@ -22,6 +22,7 @@
   BOOL _isLoading;
   BOOL _shouldHandleCookies;
   BOOL _respondedFromCache;
+  NSURLCredential* _credential;
 }
 
 /**
@@ -89,6 +90,11 @@
 @property(nonatomic) NSInteger totalBytesExpected;
 
 @property(nonatomic) BOOL respondedFromCache;
+
+/**
+ * The credential to use for an authentication challenge
+ */
+@property(nonatomic,retain) NSURLCredential* credential;
 
 + (TTURLRequest*)request;
 

@@ -29,6 +29,7 @@ static TTURLRequestQueue* gMainQueue = nil;
   NSHTTPURLResponse* _response;
   NSMutableData* _responseData;
   int _retriesLeft;
+  NSURLCredential *_credential;
 }
 
 @property(nonatomic,readonly) NSArray* requests;
@@ -37,6 +38,7 @@ static TTURLRequestQueue* gMainQueue = nil;
 @property(nonatomic,readonly) TTURLRequestCachePolicy cachePolicy;
 @property(nonatomic,readonly) NSTimeInterval cacheExpirationAge;
 @property(nonatomic,readonly) BOOL isLoading;
+@property(nonatomic,readonly) NSURLCredential* credential;
 
 - (id)initForRequest:(TTURLRequest*)request queue:(TTURLRequestQueue*)queue;
 
@@ -51,7 +53,7 @@ static TTURLRequestQueue* gMainQueue = nil;
 @implementation TTRequestLoader
 
 @synthesize URL = _URL, requests = _requests, cacheKey = _cacheKey,
-  cachePolicy = _cachePolicy, cacheExpirationAge = _cacheExpirationAge;
+  cachePolicy = _cachePolicy, cacheExpirationAge = _cacheExpirationAge, credential = _credential;
 
 - (id)initForRequest:(TTURLRequest*)request queue:(TTURLRequestQueue*)queue {
   if (self = [super init]) {
@@ -65,6 +67,7 @@ static TTURLRequestQueue* gMainQueue = nil;
     _retriesLeft = kLoadMaxRetries;
     _response = nil;
     _responseData = nil;
+    _credential = [request.credential retain];
     [self addRequest:request];
   }
   return self;
@@ -78,6 +81,7 @@ static TTURLRequestQueue* gMainQueue = nil;
   TT_RELEASE_SAFELY(_URL);
   TT_RELEASE_SAFELY(_cacheKey);
   TT_RELEASE_SAFELY(_requests); 
+  TT_RELEASE_SAFELY(_credential); 
   [super dealloc];
 }
 
@@ -151,7 +155,38 @@ static TTURLRequestQueue* gMainQueue = nil;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // NSURLConnectionDelegate
- 
+
+- (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace {
+    return YES;
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
+    
+    if ([challenge proposedCredential]) {
+        TTLOG(@"proposedCredential: %@", [challenge proposedCredential]);
+    }
+    
+    if ([challenge error]) {
+        TTLOG(@"error: %@", [challenge error]);
+    }
+    
+    TTLOG(@"previousFailureCount: %d", [challenge previousFailureCount]);
+    
+    if ([challenge previousFailureCount] == 0 && self.credential) {
+        [[challenge sender] useCredential:self.credential forAuthenticationChallenge:challenge];
+    }
+    else {
+        [[challenge sender] cancelAuthenticationChallenge:challenge]; 
+    }
+}
+
+//- (void)connection:(NSURLConnection *)connection didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
+//}
+
+//- (BOOL)connectionShouldUseCredentialStorage:(NSURLConnection *)connection {
+//    TTLOG(@"connectionShouldUseCredentialStorage");
+//}
+
 - (void)connection:(NSURLConnection*)connection didReceiveResponse:(NSHTTPURLResponse*)response {
   _response = [response retain];
   NSDictionary* headers = [response allHeaderFields];
