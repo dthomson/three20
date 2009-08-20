@@ -156,29 +156,11 @@ static TTURLRequestQueue* gMainQueue = nil;
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // NSURLConnectionDelegate
 
-- (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace {
-    return YES;
-}
+//- (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace {
+//}
 
-- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
-    
-    if ([challenge proposedCredential]) {
-        TTLOG(@"proposedCredential: %@", [challenge proposedCredential]);
-    }
-    
-    if ([challenge error]) {
-        TTLOG(@"error: %@", [challenge error]);
-    }
-    
-    TTLOG(@"previousFailureCount: %d", [challenge previousFailureCount]);
-    
-    if ([challenge previousFailureCount] == 0 && self.credential) {
-        [[challenge sender] useCredential:self.credential forAuthenticationChallenge:challenge];
-    }
-    else {
-        [[challenge sender] cancelAuthenticationChallenge:challenge]; 
-    }
-}
+//- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
+//}
 
 //- (void)connection:(NSURLConnection *)connection didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
 //}
