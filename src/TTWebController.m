@@ -141,6 +141,14 @@
   }
 }
 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+  return TTIsSupportedOrientation(interfaceOrientation);
+}
+
+- (UIView *)rotatingFooterView {
+  return _toolbar;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // UIWebViewDelegate
 

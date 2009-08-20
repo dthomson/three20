@@ -37,12 +37,37 @@ BOOL TTIsEmptyString(NSObject* object) {
   return [object isKindOfClass:[NSString class]] && ![(NSString*)object length];
 }
 
-UIInterfaceOrientation TTDeviceOrientation() {
-  UIInterfaceOrientation orient = [UIDevice currentDevice].orientation;
+BOOL TTIsKeyboardVisible() {
+  UIWindow* window = [UIApplication sharedApplication].keyWindow;
+  return !![window performSelector:@selector(firstResponder)];
+}
+
+UIDeviceOrientation TTDeviceOrientation() {
+  UIDeviceOrientation orient = [UIDevice currentDevice].orientation;
+  if (!orient) {
+    return UIDeviceOrientationPortrait;
+  } else {
+    return orient;
+  }
+}
+
+UIInterfaceOrientation TTInterfaceOrientation() {
+  UIInterfaceOrientation orient = [UIApplication sharedApplication].statusBarOrientation;
   if (!orient) {
     return UIInterfaceOrientationPortrait;
   } else {
     return orient;
+  }
+}
+
+BOOL TTIsSupportedOrientation(UIInterfaceOrientation orientation) {
+  switch (orientation) {
+    case UIInterfaceOrientationPortrait:
+    case UIInterfaceOrientationLandscapeLeft:
+    case UIInterfaceOrientationLandscapeRight:
+      return YES;
+    default:
+      return NO;
   }
 }
 
@@ -76,11 +101,20 @@ CGFloat TTStatusHeight() {
 }
 
 CGFloat TTBarsHeight() {
-  return [UIScreen mainScreen].applicationFrame.origin.y + TT_ROW_HEIGHT;
+  CGRect frame = [UIApplication sharedApplication].statusBarFrame;
+  if (UIInterfaceOrientationIsPortrait(TTInterfaceOrientation())) {
+    return frame.size.height + TT_ROW_HEIGHT;
+  } else {
+    return frame.size.width + TT_LANDSCAPE_TOOLBAR_HEIGHT;
+  }
 }
 
 CGRect TTRectContract(CGRect rect, CGFloat dx, CGFloat dy) {
   return CGRectMake(rect.origin.x, rect.origin.y, rect.size.width - dx, rect.size.height - dy);
+}
+
+CGRect TTRectShift(CGRect rect, CGFloat dx, CGFloat dy) {
+  return CGRectOffset(TTRectContract(rect, dx, dy), dx, dy);
 }
 
 CGRect TTRectInset(CGRect rect, UIEdgeInsets insets) {
