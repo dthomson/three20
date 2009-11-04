@@ -10,15 +10,9 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString*)identifier {
-  if (self = [super initWithFrame:frame reuseIdentifier:identifier]) {
-  }
-  return self;
-}
-
-- (void)dealloc {
-  [super dealloc];
-}
+//- (void)dealloc {
+//  [super dealloc];
+//}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // UITableViewCell

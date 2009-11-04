@@ -39,7 +39,9 @@
 /**
  * WARNING: This depends on undocumented APIs and may be fragile.  For testing only.
  */
+#ifdef DEBUG
 - (void)simulateTapAtPoint:(CGPoint)location;
+#endif
 
 - (CGPoint)offsetFromView:(UIView*)otherView;
 
