@@ -216,6 +216,26 @@
   return CGRectMake(self.screenViewX, self.screenViewY, self.width, self.height);
 }
 
+- (CGPoint)origin {
+    return self.frame.origin;
+}
+
+- (void)setOrigin:(CGPoint)origin {
+    CGRect frame = self.frame;
+    frame.origin = origin;
+    self.frame = frame;
+}
+
+- (CGSize)size {
+    return self.frame.size;
+}
+
+- (void)setSize:(CGSize)size {
+    CGRect frame = self.frame;
+    frame.size = size;
+    self.frame = frame;
+}
+
 - (CGPoint)offsetFromView:(UIView*)otherView {
   CGFloat x = 0, y = 0;
   for (UIView* view = self; view && view != otherView; view = view.superview) {
@@ -281,6 +301,29 @@
   return nil;
 }
 
+- (UIView*)descendantOrSelfWithClass:(Class)cls {
+    if ([self isKindOfClass:cls])
+        return self;
+    
+    for (UIView* child in self.subviews) {
+        UIView* it = [child descendantOrSelfWithClass:cls];
+        if (it)
+            return it;
+    }
+    
+    return nil;
+}
+
+- (UIView*)ancestorOrSelfWithClass:(Class)cls {
+    if ([self isKindOfClass:cls]) {
+        return self;
+    } else if (self.superview) {
+        return [self.superview ancestorOrSelfWithClass:cls];
+    } else {
+        return nil;
+    }
+}
+
 - (void)removeSubviews {
   while (self.subviews.count) {
     UIView* child = self.subviews.lastObject;
@@ -301,5 +344,97 @@
   [touch.view touchesEnded:[NSSet setWithObject:touch] withEvent:eventUp];
 }
 #endif
+
+- (CGRect)frameWithKeyboardSubtracted:(CGFloat)plusHeight {
+    CGRect frame = self.frame;
+    if( TTIsKeyboardVisible() )
+    {
+        CGRect screenFrame = TTScreenBounds();
+        CGFloat keyboardTop = (screenFrame.size.height - (TTKeyboardHeight() + plusHeight));
+        CGFloat screenBottom = self.screenY + frame.size.height;
+        CGFloat diff = screenBottom - keyboardTop;
+        if (diff > 0) {
+            frame.size.height -= diff;
+        }
+    }
+    return frame;
+}
+
+- (void)presentAsKeyboardAnimationDidStop {
+    CGRect screenFrame = TTScreenBounds();
+    CGRect bounds = CGRectMake(0, 0, screenFrame.size.width, self.height);
+    CGPoint centerBegin = CGPointMake(floor(screenFrame.size.width/2 - self.width/2),
+                                      screenFrame.size.height + floor(self.height/2));
+    CGPoint centerEnd = CGPointMake(floor(screenFrame.size.width/2 - self.width/2),
+                                    screenFrame.size.height - floor(self.height/2));
+    
+    NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                              [NSValue valueWithCGRect:bounds], UIKeyboardBoundsUserInfoKey,
+                              [NSValue valueWithCGPoint:centerBegin], UIKeyboardCenterBeginUserInfoKey,
+                              [NSValue valueWithCGPoint:centerEnd], UIKeyboardCenterEndUserInfoKey,
+                              nil];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"UIKeyboardWillShowNotification"
+                                                        object:self userInfo:userInfo];
+}
+
+- (void)dismissAsKeyboardAnimationDidStop {
+    [self removeFromSuperview];
+}
+
+- (void)presentAsKeyboardInView:(UIView*)containingView {
+    self.top = containingView.height;
+    [containingView addSubview:self];
+    
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:TT_TRANSITION_DURATION];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDidStopSelector:@selector(presentAsKeyboardAnimationDidStop)];
+    self.top -= self.height;
+    [UIView commitAnimations];
+}
+
+- (void)dismissAsKeyboard:(BOOL)animated {
+    CGRect screenFrame = TTScreenBounds();
+    CGRect bounds = CGRectMake(0, 0, screenFrame.size.width, self.height);
+    CGPoint centerBegin = CGPointMake(floor(screenFrame.size.width/2 - self.width/2),
+                                      screenFrame.size.height - floor(self.height/2));
+    CGPoint centerEnd = CGPointMake(floor(screenFrame.size.width/2 - self.width/2),
+                                    screenFrame.size.height + floor(self.height/2));
+    
+    NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                              [NSValue valueWithCGRect:bounds], UIKeyboardBoundsUserInfoKey,
+                              [NSValue valueWithCGPoint:centerBegin], UIKeyboardCenterBeginUserInfoKey,
+                              [NSValue valueWithCGPoint:centerEnd], UIKeyboardCenterEndUserInfoKey,
+                              nil];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"UIKeyboardWillHideNotification"
+                                                        object:self userInfo:userInfo];
+    
+    if (animated) {
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDuration:TT_TRANSITION_DURATION];
+        [UIView setAnimationDelegate:self];
+        [UIView setAnimationDidStopSelector:@selector(dismissAsKeyboardAnimationDidStop)];
+    }
+    
+    self.top += self.height;
+    
+    if (animated) {
+        [UIView commitAnimations];
+    } else {
+        [self dismissAsKeyboardAnimationDidStop];
+    }
+}
+
+- (UIViewController*)viewController {
+    for (UIView* next = [self superview]; next; next = next.superview) {
+        UIResponder* nextResponder = [next nextResponder];
+        if ([nextResponder isKindOfClass:[UIViewController class]]) {
+            return (UIViewController*)nextResponder;
+        }
+    }
+    return nil;
+}
 
 @end

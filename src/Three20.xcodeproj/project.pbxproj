@@ -139,6 +139,8 @@
 		BEF341970F8042520027E93C /* TTStyledTextLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = BEF341960F8042520027E93C /* TTStyledTextLabel.h */; };
 		FE15B9BB1015A0D500B5C4E6 /* UIFontAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = FE15B9B91015A0D500B5C4E6 /* UIFontAdditions.h */; };
 		FE15B9BC1015A0D500B5C4E6 /* UIFontAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = FE15B9BA1015A0D500B5C4E6 /* UIFontAdditions.m */; };
+		FEF03C0710B39DBA00844C02 /* UIWindowAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = FEF03C0610B39DBA00844C02 /* UIWindowAdditions.m */; };
+		FEF03C0910B39DC900844C02 /* UIWindowAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF03C0810B39DC900844C02 /* UIWindowAdditions.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -275,6 +277,8 @@
 		BEF341960F8042520027E93C /* TTStyledTextLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTStyledTextLabel.h; path = Three20/TTStyledTextLabel.h; sourceTree = "<group>"; };
 		FE15B9B91015A0D500B5C4E6 /* UIFontAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIFontAdditions.h; path = Three20/UIFontAdditions.h; sourceTree = "<group>"; };
 		FE15B9BA1015A0D500B5C4E6 /* UIFontAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIFontAdditions.m; sourceTree = "<group>"; };
+		FEF03C0610B39DBA00844C02 /* UIWindowAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIWindowAdditions.m; sourceTree = "<group>"; };
+		FEF03C0810B39DC900844C02 /* UIWindowAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIWindowAdditions.h; path = Three20/UIWindowAdditions.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -394,6 +398,8 @@
 				BEAF21210F4D329600D75F3B /* UIWebViewAdditions.m */,
 				BEAF21390F4D32E100D75F3B /* UIToolbarAdditions.h */,
 				BEAF211F0F4D329600D75F3B /* UIToolbarAdditions.m */,
+				FEF03C0810B39DC900844C02 /* UIWindowAdditions.h */,
+				FEF03C0610B39DBA00844C02 /* UIWindowAdditions.m */,
 			);
 			name = Additions;
 			sourceTree = "<group>";
@@ -633,6 +639,7 @@
 				BEA69ECD0FAC0FEC00DA7DDC /* TTWebController.h in Headers */,
 				BEA762500FBA1E290091B567 /* NSDateAdditions.h in Headers */,
 				FE15B9BB1015A0D500B5C4E6 /* UIFontAdditions.h in Headers */,
+				FEF03C0910B39DC900844C02 /* UIWindowAdditions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -741,6 +748,7 @@
 				BEA69ECB0FAC0FD600DA7DDC /* TTWebController.m in Sources */,
 				BEA7624E0FBA1E220091B567 /* NSDateAdditions.m in Sources */,
 				FE15B9BC1015A0D500B5C4E6 /* UIFontAdditions.m in Sources */,
+				FEF03C0710B39DBA00844C02 /* UIWindowAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
