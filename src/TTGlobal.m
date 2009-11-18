@@ -39,18 +39,20 @@ BOOL TTIsEmptyString(NSObject* object) {
 
 BOOL TTIsKeyboardVisible() {
     NSArray *windows = [[UIApplication sharedApplication] windows];
-    for( UIWindow *window in [windows reverseObjectEnumerator] )
-    {
-        for( UIView *view in [window subviews] )
-        {
-            if( !strcmp(object_getClassName(view), "UIKeyboard") )
-            {
+    for( UIWindow *window in [windows reverseObjectEnumerator] ) {
+        for( UIView *view in [window subviews] ) {
+            if( !strcmp(object_getClassName(view), "UIKeyboard") ) {
                 return YES;
             }
         }
     }
     
     return NO;
+}
+
+BOOL TTIsPhoneSupported() {
+    NSString *deviceType = [UIDevice currentDevice].model;
+    return [deviceType isEqualToString:@"iPhone"];
 }
 
 UIDeviceOrientation TTDeviceOrientation() {
@@ -102,6 +104,10 @@ CGRect TTNavigationFrame() {
   return CGRectMake(0, 0, frame.size.width, frame.size.height - TT_ROW_HEIGHT);
 }
 
+CGRect TTKeyboardNavigationFrame() {
+    return TTRectContract(TTNavigationFrame(), 0, TTKeyboardHeight());
+}
+
 CGRect TTToolbarNavigationFrame() {
   CGRect frame = [UIScreen mainScreen].applicationFrame;
   return CGRectMake(0, 0, frame.size.width, frame.size.height - TT_ROW_HEIGHT*2);
@@ -118,6 +124,30 @@ CGFloat TTBarsHeight() {
   } else {
     return frame.size.width + TT_LANDSCAPE_TOOLBAR_HEIGHT;
   }
+}
+
+CGFloat TTToolbarHeight() {
+    return TTToolbarHeightForOrientation(TTInterfaceOrientation());
+}
+
+CGFloat TTToolbarHeightForOrientation(UIInterfaceOrientation orientation) {
+    if (UIInterfaceOrientationIsPortrait(orientation)) {
+        return TT_ROW_HEIGHT;
+    } else {
+        return TT_LANDSCAPE_TOOLBAR_HEIGHT;
+    }
+}
+
+CGFloat TTKeyboardHeight() {
+    return TTKeyboardHeightForOrientation(TTInterfaceOrientation());
+}
+
+CGFloat TTKeyboardHeightForOrientation(UIInterfaceOrientation orientation) {
+    if (UIInterfaceOrientationIsPortrait(orientation)) {
+        return TT_KEYBOARD_HEIGHT;
+    } else {
+        return TT_LANDSCAPE_KEYBOARD_HEIGHT;
+    }
 }
 
 CGRect TTRectContract(CGRect rect, CGFloat dx, CGFloat dy) {

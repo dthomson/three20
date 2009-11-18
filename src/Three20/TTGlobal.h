@@ -169,6 +169,11 @@ BOOL TTIsEmptyString(NSObject* object);
 BOOL TTIsKeyboardVisible();
 
 /**
+ * Tests if the device has phone capabilities.
+ */
+BOOL TTIsPhoneSupported();
+
+/**
  * Gets the current device orientation.
  */
 UIDeviceOrientation TTDeviceOrientation();
@@ -214,6 +219,18 @@ CGFloat TTStatusHeight();
  * The height of the area containing the status bar and navigation bar.
  */
 CGFloat TTBarsHeight();
+
+/**
+ * The height of a toolbar.
+ */
+CGFloat TTToolbarHeight();
+CGFloat TTToolbarHeightForOrientation(UIInterfaceOrientation orientation);
+
+/**
+ * The height of the keyboard.
+ */
+CGFloat TTKeyboardHeight();
+CGFloat TTKeyboardHeightForOrientation(UIInterfaceOrientation orientation);
 
 /**
  * Returns a rectangle that is smaller or larger than the source rectangle.
