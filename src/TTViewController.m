@@ -149,8 +149,9 @@
 
       NSMutableDictionary* state = [[NSMutableDictionary alloc] init];
       [self persistView:state];
-      _frozenState = state;
-
+      self.frozenState = state;
+      TT_RELEASE_SAFELY(state);
+        
       NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
       UIView* view = self.view;

@@ -138,13 +138,13 @@ static const CGFloat kVPadding = 7;
 // class public
 
 + (TTButton*)buttonWithStyle:(NSString*)selector {
-  TTButton* button = [[[TTButton alloc] initWithFrame:CGRectZero] autorelease];
+  TTButton* button = [[[self alloc] initWithFrame:CGRectZero] autorelease];
   [button setStylesWithSelector:selector];
   return button;
 }
 
 + (TTButton*)buttonWithStyle:(NSString*)selector title:(NSString*)title {
-  TTButton* button = [[[TTButton alloc] initWithFrame:CGRectZero] autorelease];
+  TTButton* button = [[[self alloc] initWithFrame:CGRectZero] autorelease];
   [button setTitle:title forState:UIControlStateNormal];
   [button setStylesWithSelector:selector];
   return button;
