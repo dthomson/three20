@@ -6,7 +6,7 @@
 /**
  * The view controller that comes before this one in a navigation controller's history.
  */
-- (UIViewController*)previousViewController;
+- (UIViewController*)ttPreviousViewController;
 
 /**
  * The view controller that comes after this one in a navigation controller's history.

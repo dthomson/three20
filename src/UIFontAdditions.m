@@ -4,7 +4,7 @@
 
 @implementation UIFont (TTCategory)
 
-- (CGFloat)lineHeight {
+- (CGFloat)ttLineHeight {
   return (self.ascender - self.descender)+1;
 }
 

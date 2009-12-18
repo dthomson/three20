@@ -14,8 +14,8 @@
 @property(nonatomic) CGFloat centerX;
 @property(nonatomic) CGFloat centerY;
 
-@property(nonatomic,readonly) CGFloat screenX;
-@property(nonatomic,readonly) CGFloat screenY;
+@property(nonatomic,readonly) CGFloat ttScreenX;
+@property(nonatomic,readonly) CGFloat ttScreenY;
 @property(nonatomic,readonly) CGFloat screenViewX;
 @property(nonatomic,readonly) CGFloat screenViewY;
 @property(nonatomic,readonly) CGRect screenFrame;

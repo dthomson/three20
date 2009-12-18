@@ -753,12 +753,12 @@ static CGFloat kDefaultIconSize = 50;
   if (!height) {
     if ([view isKindOfClass:[UITextView class]]) {
       UITextView* textView = (UITextView*)view;
-      CGFloat lineHeight = (textView.font.ascender - textView.font.descender) + 1;
-      height = lineHeight * kDefaultTextViewLines;
+      CGFloat ttLineHeight = (textView.font.ascender - textView.font.descender) + 1;
+      height = ttLineHeight * kDefaultTextViewLines;
     } else if ([view isKindOfClass:[TTTextEditor class]]) {
       UITextView* textView = [(TTTextEditor*)view textView];
-      CGFloat lineHeight = (textView.font.ascender - textView.font.descender) + 1;
-      height = lineHeight * kDefaultTextViewLines;
+      CGFloat ttLineHeight = (textView.font.ascender - textView.font.descender) + 1;
+      height = ttLineHeight * kDefaultTextViewLines;
     } else if ([view isKindOfClass:[UITextField class]]) {
       height = TT_ROW_HEIGHT;
     } else {

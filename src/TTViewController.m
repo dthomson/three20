@@ -30,7 +30,7 @@
   [v3 getValue:&keyboardEnd];
   
   CGFloat keyboardTop = keyboardEnd.y - floor(keyboardBounds.size.height/2);
-  CGFloat screenBottom = self.view.screenY + self.view.height;
+  CGFloat screenBottom = self.view.ttScreenY + self.view.height;
   if (screenBottom != keyboardTop) {
     BOOL animated = keyboardStart.y != keyboardEnd.y;
     if (animated) {

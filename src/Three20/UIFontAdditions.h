@@ -9,6 +9,6 @@
  * Why this isn't part of UIFont is beyond me. This is the height you would expect to get
  * by calling sizeWithFont.
  */
-- (CGFloat)lineHeight;
+- (CGFloat)ttLineHeight;
 
 @end

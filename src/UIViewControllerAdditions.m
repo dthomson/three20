@@ -20,7 +20,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (UIViewController*)previousViewController {
+- (UIViewController*)ttPreviousViewController {
   NSArray* viewControllers = self.navigationController.viewControllers;
   if (viewControllers.count > 1) {
     NSUInteger index = [viewControllers indexOfObject:self];

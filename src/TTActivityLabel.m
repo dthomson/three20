@@ -157,7 +157,7 @@ static CGFloat kThinBezelHeight = 35;
     }
     
     y = _centeredToScreen
-      ? floor(appFrame.size.height/2 - bezelHeight/2) - self.screenY
+      ? floor(appFrame.size.height/2 - bezelHeight/2) - self.ttScreenY
       : floor(self.height/2 - bezelHeight/2);
   }
   

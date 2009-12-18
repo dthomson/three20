@@ -92,8 +92,8 @@
 }
 
 - (void)inflateLineHeight:(CGFloat)height {
-  if (height > _lineHeight) {
-    _lineHeight = height;
+  if (height > _ttLineHeight) {
+    _ttLineHeight = height;
   }
   if (_inlineFrame) {
     TTStyledInlineFrame* inlineFrame = _inlineFrame;
@@ -220,19 +220,19 @@
     while (frame) {
       // Align to the text baseline
       // XXXjoe Support top, bottom, and center alignment also
-      if (frame.height < _lineHeight) {
+      if (frame.height < _ttLineHeight) {
         UIFont* font = frame.font ? frame.font : _font;
-        [self offsetFrame:frame by:(_lineHeight - (frame.height - font.descender))];
+        [self offsetFrame:frame by:(_ttLineHeight - (frame.height - font.descender))];
       }
       frame = frame.nextFrame;
     }
   }
 
-  _height += _lineHeight;
+  _height += _ttLineHeight;
   [self checkFloats];
 
   _lineWidth = 0;
-  _lineHeight = 0;
+  _ttLineHeight = 0;
   _x = _minX;
   _lineFirstFrame = nil;
 
@@ -349,8 +349,8 @@
       }
 
       if (_lastFrame) {
-        if (!_lineHeight && [elt isKindOfClass:[TTStyledLineBreakNode class]]) {
-          _lineHeight = self.fontHeight;
+        if (!_ttLineHeight && [elt isKindOfClass:[TTStyledLineBreakNode class]]) {
+          _ttLineHeight = self.fontHeight;
         }
         [self breakLine];
       }
@@ -546,7 +546,7 @@
       if (lineRange.length) {
         NSString* line = [text substringWithRange:lineRange];
         [self addFrameForText:line element:element node:textNode width:frameWidth
-              height:_lineHeight ? _lineHeight : self.fontHeight];
+              height:_ttLineHeight ? _ttLineHeight : self.fontHeight];
       }
       
       if (_lineWidth) {
@@ -584,7 +584,7 @@
                                                       - lineStartIndex);
       NSString* line = !_lineWidth ? word : [text substringWithRange:lineRange];
       [self addFrameForText:line element:element node:textNode width:frameWidth
-            height:[_font lineHeight]];
+            height:[_font ttLineHeight]];
       frameWidth = 0;
     }
   }
@@ -616,7 +616,7 @@
     _width = 0;
     _height = 0;
     _lineWidth = 0;
-    _lineHeight = 0;
+    _ttLineHeight = 0;
     _minX = 0;
     _floatLeftWidth = 0;
     _floatRightWidth = 0;

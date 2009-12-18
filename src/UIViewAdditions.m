@@ -174,7 +174,7 @@
   self.frame = frame;
 }
 
-- (CGFloat)screenX {
+- (CGFloat)ttScreenX {
   CGFloat x = 0;
   for (UIView* view = self; view; view = view.superview) {
     x += view.left;
@@ -182,7 +182,7 @@
   return x;
 }
 
-- (CGFloat)screenY {
+- (CGFloat)ttScreenY {
   CGFloat y = 0;
   for (UIView* view = self; view; view = view.superview) {
     y += view.top;
@@ -356,7 +356,7 @@
     {
         CGRect screenFrame = TTScreenBounds();
         CGFloat keyboardTop = (screenFrame.size.height - (TTKeyboardHeight() + plusHeight));
-        CGFloat screenBottom = self.screenY + frame.size.height;
+        CGFloat screenBottom = self.ttScreenY + frame.size.height;
         CGFloat diff = screenBottom - keyboardTop;
         if (diff > 0) {
             frame.size.height -= diff;

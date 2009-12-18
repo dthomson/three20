@@ -640,7 +640,7 @@ static const NSInteger kDefaultLightSource = 125;
     if (!maxWidth) {
       maxWidth = CGFLOAT_MAX;
     }
-    CGFloat maxHeight = _numberOfLines ? _numberOfLines * font.lineHeight : CGFLOAT_MAX;
+    CGFloat maxHeight = _numberOfLines ? _numberOfLines * font.ttLineHeight : CGFLOAT_MAX;
     CGSize maxSize = CGSizeMake(maxWidth, maxHeight);
     CGSize textSize = [self sizeOfText:text withFont:font size:maxSize];
     

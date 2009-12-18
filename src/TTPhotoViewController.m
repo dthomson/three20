@@ -72,7 +72,7 @@ static const NSTimeInterval kSlideshowInterval = 2;
 - (void)updateChrome {
   [self updateTitle];
 
-  if (![self.previousViewController isKindOfClass:[TTThumbsViewController class]]) {
+  if (![self.ttPreviousViewController isKindOfClass:[TTThumbsViewController class]]) {
     if (_photoSource.numberOfPhotos > 1) {
       self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
         initWithTitle:TTLocalizedString(@"See All", @"See all photo thumbnails")

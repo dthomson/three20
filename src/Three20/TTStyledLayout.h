@@ -7,7 +7,7 @@
   CGFloat _width;
   CGFloat _height;
   CGFloat _lineWidth;
-  CGFloat _lineHeight;
+  CGFloat _ttLineHeight;
   CGFloat _minX;
   CGFloat _floatLeftWidth;
   CGFloat _floatRightWidth;

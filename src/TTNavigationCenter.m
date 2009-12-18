@@ -253,7 +253,7 @@ static TTNavigationCenter* gDefaultCenter = nil;
       if ([controller isKindOfClass:[TTViewController class]]) {
         TTViewController* ttcontroller = (TTViewController*)controller;
         if (!ttcontroller.appearing) {
-          controller = ttcontroller.previousViewController;
+          controller = ttcontroller.ttPreviousViewController;
         } else {
           break;
         }
