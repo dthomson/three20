@@ -58,6 +58,7 @@ static const CGFloat kSectionHeaderHeight = 35;
   if ([object isKindOfClass:[TTTableLinkedItem class]]) {
     TTTableLinkedItem* item = object;
     if (item.URL && [_controller shouldNavigateToURL:item.URL]) {
+      [tableView deselectRowAtIndexPath:indexPath animated:YES];
       [[TTNavigationCenter defaultCenter] displayURL:item.URL];
     }
 

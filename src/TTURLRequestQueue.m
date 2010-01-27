@@ -171,14 +171,18 @@ static TTURLRequestQueue* gMainQueue = nil;
 
 - (void)connection:(NSURLConnection*)connection didReceiveResponse:(NSHTTPURLResponse*)response {
   _response = [response retain];
-  NSDictionary* headers = [response allHeaderFields];
-  int contentLength = [[headers objectForKey:@"Content-Length"] intValue];
-  if (contentLength > _queue.maxContentLength && _queue.maxContentLength) {
-    TTLOG(@"MAX CONTENT LENGTH EXCEEDED (%d) %@", contentLength, _URL);
-    [self cancel];
-  }
-
-  _responseData = [[NSMutableData alloc] initWithCapacity:contentLength];
+    if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+      NSDictionary* headers = [response allHeaderFields];
+      int contentLength = [[headers objectForKey:@"Content-Length"] intValue];
+      if (contentLength > _queue.maxContentLength && _queue.maxContentLength) {
+        TTLOG(@"MAX CONTENT LENGTH EXCEEDED (%d) %@", contentLength, _URL);
+        [self cancel];
+      }
+        _responseData = [[NSMutableData alloc] initWithCapacity:contentLength];
+    }
+    else {
+        _responseData = [[NSMutableData alloc] init];
+    }
 }
 
 - (void)connection:(NSURLConnection*)connection didReceiveData:(NSData*)data {
@@ -198,18 +202,23 @@ static TTURLRequestQueue* gMainQueue = nil;
  
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
   TTNetworkRequestStopped();
-
-  if (_response.statusCode == 200) {
-    [_queue performSelector:@selector(loader:didLoadResponse:data:) withObject:self
-      withObject:_response withObject:_responseData];
-  } else {
-    TTLOG(@"  FAILED LOADING (%d) %@", _response.statusCode, _URL);
-    NSError* error = [NSError errorWithDomain:NSURLErrorDomain code:_response.statusCode
-      userInfo:nil];
-    [_queue performSelector:@selector(loader:didFailLoadWithError:) withObject:self
-      withObject:error];
-  }
-
+    if ([_response isKindOfClass:[NSHTTPURLResponse class]]) {
+      if (_response.statusCode == 200) {
+        [_queue performSelector:@selector(loader:didLoadResponse:data:) withObject:self
+          withObject:_response withObject:_responseData];
+      } else {
+        TTLOG(@"  FAILED LOADING (%d) %@", _response.statusCode, _URL);
+        NSError* error = [NSError errorWithDomain:NSURLErrorDomain code:_response.statusCode
+          userInfo:nil];
+        [_queue performSelector:@selector(loader:didFailLoadWithError:) withObject:self
+          withObject:error];
+      }
+    }
+    else {
+        [_queue performSelector:@selector(loader:didLoadResponse:data:) withObject:self
+                     withObject:_response withObject:_responseData];
+    }
+    
   TT_RELEASE_SAFELY(_responseData);
   TT_RELEASE_SAFELY(_connection);
 }
