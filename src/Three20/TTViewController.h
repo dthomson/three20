@@ -13,6 +13,8 @@ typedef enum {
 
 @protocol TTPersistable;
 
+@class TTSearchDisplayController, TTTableViewController;
+
 @interface TTViewController : UIViewController {
   NSDictionary* _frozenState;
   TTViewState _viewState;
@@ -30,6 +32,8 @@ typedef enum {
   BOOL _appeared;
   BOOL _unloaded;
   BOOL _autoresizesForKeyboard;
+    
+  TTSearchDisplayController* _searchController;
 }
 
 /**
@@ -71,6 +75,16 @@ typedef enum {
  * The style of the status bar when this controller is appearing.
  */
 @property(nonatomic) UIStatusBarStyle statusBarStyle;
+
+/**
+ * A view controller used to display the contents of the search display controller.
+ *
+ * If you assign a view controller to this property, it will automatically create a search
+ * display controller which you can access through this view controller's searchDisplaController
+ * property.  You can then take the searchBar from that controller and add it to your views. The
+ * search bar will then search the data source of the view controller that you assigned here.
+ */
+@property(nonatomic,retain) TTTableViewController* searchViewController;
 
 /**
  * The view has appeared at least once.

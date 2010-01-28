@@ -2,6 +2,8 @@
 #import "Three20/TTErrorView.h"
 #import "Three20/TTURLRequestQueue.h"
 #import "Three20/TTStyleSheet.h"
+#import "Three20/TTTableViewController.h"
+#import "Three20/TTSearchDisplayController.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -199,6 +201,28 @@
 
 - (NSString*)viewType {
   return nil;
+}
+
+- (TTTableViewController*)searchViewController {
+    return _searchController.searchResultsViewController;
+}
+
+- (void)setSearchViewController:(TTTableViewController*)searchViewController {
+    if (searchViewController) {
+        if (!_searchController) {
+            UISearchBar* searchBar = [[[UISearchBar alloc] init] autorelease];
+            [searchBar sizeToFit];
+            
+            _searchController = [[TTSearchDisplayController alloc] initWithSearchBar:searchBar
+                                                                  contentsController:self];
+        }
+        
+        searchViewController.superController = self;
+        _searchController.searchResultsViewController = searchViewController;
+    } else {
+        _searchController.searchResultsViewController = nil;
+        TT_RELEASE_SAFELY(_searchController);
+    }
 }
 
 - (void)setAutoresizesForKeyboard:(BOOL)autoresizesForKeyboard {

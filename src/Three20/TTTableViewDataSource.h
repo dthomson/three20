@@ -19,6 +19,11 @@
 
 - (void)load:(TTURLRequestCachePolicy)cachePolicy nextPage:(BOOL)nextPage;
 
+/**
+ *
+ */
+- (void)search:(NSString*)text;
+
 @end
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

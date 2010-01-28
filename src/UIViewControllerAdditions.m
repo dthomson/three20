@@ -1,9 +1,63 @@
+#import "Three20/UIViewControllerAdditions.h"
 #import "Three20/TTGlobal.h"
 #import "Three20/TTURLRequestQueue.h"
+
+static NSMutableDictionary* gSuperControllers = nil;
+static NSMutableDictionary* gPopupViewControllers = nil;
+
+@interface TTPopupView : UIView {
+    UIViewController* _popupViewController;
+}
+
+@property(nonatomic,retain) UIViewController* popupViewController;
+
+@end
+
+@implementation TTPopupView
+
+@synthesize popupViewController = _popupViewController;
+
+- (id)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
+        _popupViewController = nil;
+    }
+    return self;
+}
+
+- (void)dealloc {
+    [_popupViewController release];
+    [super dealloc];
+}
+
+- (void)didAddSubview:(UIView*)subview {
+//    TTDCONDITIONLOG(TTDFLAG_VIEWCONTROLLERS, @"ADD %@", subview);
+}
+
+- (void)willRemoveSubview:(UIView*)subview {
+//    TTDCONDITIONLOG(TTDFLAG_VIEWCONTROLLERS, @"REMOVE %@", subview);
+    [self removeFromSuperview];
+}
+
+@end
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 @implementation UIViewController (TTCategory)
+
+// TTD TWEAK: Do this somewhere
+// SwapMethods a new dealloc for UIViewController so it notifies us when it's going away.
+// We need to remove dying controllers from our binding cache.
+//TTSwapMethods([UIViewController class], @selector(dealloc), @selector(ttdealloc));
+
+- (void)ttdealloc {
+    self.superController = nil;
+    self.popupViewController = nil;
+    
+    // Calls the original dealloc, swizzled away
+    [self ttdealloc];
+}
+
 
 - (void)showNavigationBar:(BOOL)show animated:(BOOL)animated {
   if (animated) {
@@ -19,6 +73,37 @@
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (BOOL)canContainControllers {
+    return NO;
+}
+
+- (UIViewController*)superController {
+    UIViewController* parent = self.parentViewController;
+    if (parent) {
+        return parent;
+    } else {
+        NSString* key = [NSString stringWithFormat:@"%d", self.hash];
+        return [gSuperControllers objectForKey:key];
+    }
+}
+
+- (void)setSuperController:(UIViewController*)viewController {
+    NSString* key = [NSString stringWithFormat:@"%d", self.hash];
+    if (viewController) {
+        if (!gSuperControllers) {
+            gSuperControllers = TTCreateNonRetainingDictionary();
+        }
+        [gSuperControllers setObject:viewController forKey:key];
+    } else {
+        [gSuperControllers removeObjectForKey:key];
+    }
+}
+
+- (UIViewController*)topSubcontroller {
+    return nil;
+}
+
 
 - (UIViewController*)ttPreviousViewController {
   NSArray* viewControllers = self.navigationController.viewControllers;
@@ -41,6 +126,52 @@
     }
   }
   return nil;
+}
+
+- (UIViewController*)popupViewController {
+    NSString* key = [NSString stringWithFormat:@"%d", self.hash];
+    return [gPopupViewControllers objectForKey:key];
+}
+
+- (void)setPopupViewController:(UIViewController*)viewController {
+    NSString* key = [NSString stringWithFormat:@"%d", self.hash];
+    if (viewController) {
+        if (!gPopupViewControllers) {
+            gPopupViewControllers = TTCreateNonRetainingDictionary();
+        }
+        [gPopupViewControllers setObject:viewController forKey:key];
+    } else {
+        [gPopupViewControllers removeObjectForKey:key];
+    }
+}
+
+- (void)addSubcontroller:(UIViewController*)controller animated:(BOOL)animated
+              transition:(UIViewAnimationTransition)transition {
+    if (self.navigationController) {
+        [self.navigationController addSubcontroller:controller animated:animated
+                                         transition:transition];
+    }
+}
+
+- (void)removeFromSupercontroller {
+    [self removeFromSupercontrollerAnimated:YES];
+}
+
+- (void)removeFromSupercontrollerAnimated:(BOOL)animated {
+    if (self.navigationController) {
+        [self.navigationController popViewControllerAnimated:animated];
+    }
+}
+
+- (void)bringControllerToFront:(UIViewController*)controller animated:(BOOL)animated {
+}
+
+- (NSString*)keyForSubcontroller:(UIViewController*)controller {
+    return nil;
+}
+
+- (UIViewController*)subcontrollerForKey:(NSString*)key {
+    return nil;
 }
 
 - (void)alert:(NSString*)message title:(NSString*)title delegate:(id)delegate {
