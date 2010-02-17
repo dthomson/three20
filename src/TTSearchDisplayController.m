@@ -20,11 +20,18 @@
 
 #import "Three20/TTTableViewController.h"
 #import "Three20/TTTableViewDataSource.h"
+#import "Three20/TTDefaultStyleSheet.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // global
 
-static const NSTimeInterval kPauseInterval = 0.4;
+//static const NSTimeInterval kPauseInterval = 0.4;
+static const NSTimeInterval kPauseInterval = 4.0;
+
+static const NSString *MMSearchSelectorKey = @"MMSearchScopeSelectorKey";
+static const NSString *MMSearchScopeOptionKey = @"MMSearchScopeOptionKey";
+static const NSString *MMSearchPauseDelayKey = @"MMSearchPauseDelayKey";
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,22 +47,59 @@ static const NSTimeInterval kPauseInterval = 0.4;
   if (_searchResultsViewController.dataSource.isLoading) {
     [_searchResultsViewController.dataSource cancel];
   }
-    
+
+  [_searchResultsViewController.dataSource invalidate:YES];
   [_searchResultsViewController.dataSource search:nil];
   [_searchResultsViewController viewWillDisappear:NO];
   [_searchResultsViewController viewDidDisappear:NO];
-  _searchResultsViewController.tableView = nil;
+// XXX: Disable for now b/c of crash
+//  _searchResultsViewController.tableView = nil;
+//  [_searchResultsViewController invalidateView];
+}
+
+- (void)restartPauseTimerWithInfo:(NSDictionary *)userInfo {
+    TT_INVALIDATE_TIMER(_pauseTimer);
+    _pauseTimer = [NSTimer scheduledTimerWithTimeInterval:kPauseInterval target:self
+                                                 selector:@selector(searchAfterPause) userInfo:userInfo repeats:NO];
 }
 
 - (void)restartPauseTimer {
-  TT_INVALIDATE_TIMER(_pauseTimer);
-  _pauseTimer = [NSTimer scheduledTimerWithTimeInterval:kPauseInterval target:self
-                         selector:@selector(searchAfterPause) userInfo:nil repeats:NO];
+    [self restartPauseTimerWithInfo:nil];
 }
 
-- (void)searchAfterPause {
-  _pauseTimer = nil;
-  [_searchResultsViewController.dataSource search:self.searchBar.text];
+
+- (void)searchAfterPause {    
+    // Parse the timer userIfno
+    NSDictionary *userInfo = _pauseTimer.userInfo;
+    NSString *searchSelectorString = [userInfo objectForKey:MMSearchSelectorKey];
+    NSNumber *searchOption = [userInfo objectForKey:MMSearchScopeOptionKey];
+
+    // Timer is done
+    _pauseTimer = nil;
+
+    // Do the correct search
+    if (searchSelectorString) {
+        SEL searchSelector = NSSelectorFromString(searchSelectorString);
+        
+        // Default if we don't respond to the search selector
+        if ([_searchResultsViewController.dataSource respondsToSelector:searchSelector] == NO) {
+            [_searchResultsViewController.dataSource search:self.searchBar.text];
+            return;
+        }
+        
+        if ([searchSelectorString isEqual:@"search:"]) {
+            [_searchResultsViewController.dataSource search:self.searchBar.text];
+        }
+        else if ([searchSelectorString isEqual:@"search:searchScope:"]) {
+            
+            [_searchResultsViewController.dataSource performSelector:searchSelector withObject:self.searchBar.text withObject:searchOption];
+        }
+    }
+    // Default if we don't have the search selector
+    else {
+        [_searchResultsViewController.dataSource search:self.searchBar.text];
+        return;
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -92,6 +136,13 @@ static const NSTimeInterval kPauseInterval = 0.4;
     backgroundView.alpha = 0;
     [UIView commitAnimations];
   }
+  originalSearchBarBounds = controller.searchBar.bounds;
+  originalSearchBarCenter = controller.searchBar.center;
+    
+    TTLOGRECT(originalSearchBarBounds);
+    
+  controller.searchBar.left = 0;
+    
 //  if (!self.searchContentsController.navigationController) {
 //    [UIView beginAnimations:nil context:nil];
 //    self.searchBar.superview.top -= self.searchBar.screenY - TTStatusHeight();
@@ -100,7 +151,8 @@ static const NSTimeInterval kPauseInterval = 0.4;
 }
 
 - (void)searchDisplayControllerDidBeginSearch:(UISearchDisplayController*)controller {
-  [_searchResultsViewController updateView];
+  // XXX: Moved vaildateView to -searchDisplayController:didLoadSearchResultsTableView
+  [_searchResultsViewController validateView];
 }
 
 - (void)searchDisplayControllerWillEndSearch:(UISearchDisplayController*)controller {
@@ -113,7 +165,7 @@ static const NSTimeInterval kPauseInterval = 0.4;
     backgroundView.alpha = 1;
     [UIView commitAnimations];
   }
-
+    
 //  if (!self.searchContentsController.navigationController) {
 //    [UIView beginAnimations:nil context:nil];
 //    self.searchBar.superview.top += self.searchBar.top - TTStatusHeight();
@@ -121,21 +173,38 @@ static const NSTimeInterval kPauseInterval = 0.4;
 //  }
 }
  
-- (void)searchDisplayControllerDidEndSearch:(UISearchDisplayController*)controller {
+- (void)searchDisplayControllerDidEndSearch:(UISearchDisplayController*)controller {    
   [self resetResults];
+    
+    NSLog(@"width before %f after %f", controller.searchBar.width, originalSearchBarBounds.size.width);
+    
+    controller.searchBar.width = originalSearchBarBounds.size.width;
+    controller.searchBar.height = originalSearchBarBounds.size.height;
+
+//    [UIView beginAnimations:nil context:nil];
+    controller.searchBar.centerX = originalSearchBarCenter.x;
+    controller.searchBar.centerY = originalSearchBarCenter.y;
+//    [UIView commitAnimations];
 }
 
 - (void)searchDisplayController:(UISearchDisplayController *)controller
         didLoadSearchResultsTableView:(UITableView *)tableView {
+    tableView.backgroundColor = TTSTYLEVAR(backgroundColor);
+    tableView.separatorColor = TTSTYLEVAR(tableSeparatorColor);   
+    _searchResultsViewController.tableView = tableView;
+    [_searchResultsViewController validateView];
 }
  
 - (void)searchDisplayController:(UISearchDisplayController *)controller
         willUnloadSearchResultsTableView:(UITableView *)tableView {
+    _searchResultsViewController.tableView = nil;
+    [_searchResultsViewController invalidateView];
 }
 
-- (void)searchDisplayController:(UISearchDisplayController *)controller
-        didShowSearchResultsTableView:(UITableView *)tableView {
-  _searchResultsViewController.tableView = tableView;
+- (void)searchDisplayController:(UISearchDisplayController *)controller willShowSearchResultsTableView:(UITableView *)tableView {
+}
+
+- (void)searchDisplayController:(UISearchDisplayController *)controller didShowSearchResultsTableView:(UITableView *)tableView {
   [_searchResultsViewController viewWillAppear:NO];
   [_searchResultsViewController viewDidAppear:NO];
 }
@@ -150,17 +219,44 @@ static const NSTimeInterval kPauseInterval = 0.4;
   if (_pausesBeforeSearching) {
     [self restartPauseTimer];
   } else {
+    [_searchResultsViewController.dataSource invalidate:YES];
     [_searchResultsViewController.dataSource search:searchString];
+    [_searchResultsViewController invalidateView];
   }
-  return NO;
+  // XXX: Was NO before
+  return YES;
 }
 
 - (BOOL)searchDisplayController:(UISearchDisplayController*)controller
         shouldReloadTableForSearchScope:(NSInteger)searchOption {
-  // XXX: Tweaked here b/c we don't have TTModel
-  [_searchResultsViewController.dataSource invalidate:YES];
-  [_searchResultsViewController.dataSource search:self.searchBar.text];
-  return NO;
+    // XXX: Tweaked here b/c we don't have TTModel
+    [_searchResultsViewController.dataSource invalidate:YES];
+    
+    // Pack the search option into an object
+    NSNumber *searchOptionObject = [NSNumber numberWithInteger:searchOption];
+    
+    // Determine the search delay
+    NSNumber *searchDelay = [NSNumber numberWithDouble:3.0];
+    
+    if (_pausesBeforeSearching) {
+        NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:searchOptionObject, MMSearchScopeOptionKey, NSStringFromSelector(@selector(search:searchScope:)), MMSearchSelectorKey, searchDelay, MMSearchPauseDelayKey, nil]; 
+        [self restartPauseTimerWithInfo:userInfo];
+    } 
+    else {
+        SEL scopedSearch = @selector(search:searchScope:);
+        
+        if ([_searchResultsViewController.dataSource respondsToSelector:scopedSearch]) {
+            [_searchResultsViewController.dataSource performSelector:scopedSearch withObject:self.searchBar.text withObject:searchOptionObject];
+        }
+        else {
+            [_searchResultsViewController.dataSource search:self.searchBar.text];
+        }
+
+        [_searchResultsViewController invalidateView];
+    }
+
+    // XXX: Was NO before
+    return YES;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

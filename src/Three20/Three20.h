@@ -18,6 +18,7 @@
 #import "Three20/TTTableViewController.h"
 #import "Three20/TTMessageController.h"
 #import "Three20/TTWebController.h"
+#import "Three20/TTSearchDisplayController.h"
 
 #import "Three20/TTView.h"
 #import "Three20/TTImageView.h"

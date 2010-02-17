@@ -139,10 +139,10 @@
 		BEF341970F8042520027E93C /* TTStyledTextLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = BEF341960F8042520027E93C /* TTStyledTextLabel.h */; };
 		FE15B9BB1015A0D500B5C4E6 /* UIFontAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = FE15B9B91015A0D500B5C4E6 /* UIFontAdditions.h */; };
 		FE15B9BC1015A0D500B5C4E6 /* UIFontAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = FE15B9BA1015A0D500B5C4E6 /* UIFontAdditions.m */; };
+		FEEEB54A1112BBF700F62CE4 /* TTSearchDisplayController.h in Headers */ = {isa = PBXBuildFile; fileRef = FEEEB5491112BBF700F62CE4 /* TTSearchDisplayController.h */; };
 		FEF03C0710B39DBA00844C02 /* UIWindowAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = FEF03C0610B39DBA00844C02 /* UIWindowAdditions.m */; };
 		FEF03C0910B39DC900844C02 /* UIWindowAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF03C0810B39DC900844C02 /* UIWindowAdditions.h */; };
 		FEFAD2BF11112FAB00F9BE3E /* TTSearchDisplayController.m in Sources */ = {isa = PBXBuildFile; fileRef = FEFAD2BE11112FAB00F9BE3E /* TTSearchDisplayController.m */; };
-		FEFAD2C111112FC300F9BE3E /* TTSearchDisplayController.h in Headers */ = {isa = PBXBuildFile; fileRef = FEFAD2C011112FC300F9BE3E /* TTSearchDisplayController.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -279,10 +279,10 @@
 		BEF341960F8042520027E93C /* TTStyledTextLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTStyledTextLabel.h; path = Three20/TTStyledTextLabel.h; sourceTree = "<group>"; };
 		FE15B9B91015A0D500B5C4E6 /* UIFontAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIFontAdditions.h; path = Three20/UIFontAdditions.h; sourceTree = "<group>"; };
 		FE15B9BA1015A0D500B5C4E6 /* UIFontAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIFontAdditions.m; sourceTree = "<group>"; };
+		FEEEB5491112BBF700F62CE4 /* TTSearchDisplayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTSearchDisplayController.h; path = Three20/TTSearchDisplayController.h; sourceTree = "<group>"; };
 		FEF03C0610B39DBA00844C02 /* UIWindowAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIWindowAdditions.m; sourceTree = "<group>"; };
 		FEF03C0810B39DC900844C02 /* UIWindowAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIWindowAdditions.h; path = Three20/UIWindowAdditions.h; sourceTree = "<group>"; };
 		FEFAD2BE11112FAB00F9BE3E /* TTSearchDisplayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTSearchDisplayController.m; sourceTree = "<group>"; };
-		FEFAD2C011112FC300F9BE3E /* TTSearchDisplayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTSearchDisplayController.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -566,7 +566,7 @@
 				BEE34EAD0F495C42008C826E /* TTMessageController.m */,
 				BEA69ECC0FAC0FEC00DA7DDC /* TTWebController.h */,
 				BEA69ECA0FAC0FD600DA7DDC /* TTWebController.m */,
-				FEFAD2C011112FC300F9BE3E /* TTSearchDisplayController.h */,
+				FEEEB5491112BBF700F62CE4 /* TTSearchDisplayController.h */,
 				FEFAD2BE11112FAB00F9BE3E /* TTSearchDisplayController.m */,
 			);
 			name = "View Controllers";
@@ -646,7 +646,7 @@
 				BEA762500FBA1E290091B567 /* NSDateAdditions.h in Headers */,
 				FE15B9BB1015A0D500B5C4E6 /* UIFontAdditions.h in Headers */,
 				FEF03C0910B39DC900844C02 /* UIWindowAdditions.h in Headers */,
-				FEFAD2C111112FC300F9BE3E /* TTSearchDisplayController.h in Headers */,
+				FEEEB54A1112BBF700F62CE4 /* TTSearchDisplayController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
