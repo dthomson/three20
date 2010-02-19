@@ -52,9 +52,6 @@ static const NSString *MMSearchPauseDelayKey = @"MMSearchPauseDelayKey";
   [_searchResultsViewController.dataSource search:nil];
   [_searchResultsViewController viewWillDisappear:NO];
   [_searchResultsViewController viewDidDisappear:NO];
-// XXX: Disable for now b/c of crash
-//  _searchResultsViewController.tableView = nil;
-//  [_searchResultsViewController invalidateView];
 }
 
 - (void)restartPauseTimerWithInfo:(NSDictionary *)userInfo {
@@ -136,12 +133,6 @@ static const NSString *MMSearchPauseDelayKey = @"MMSearchPauseDelayKey";
     backgroundView.alpha = 0;
     [UIView commitAnimations];
   }
-  originalSearchBarBounds = controller.searchBar.bounds;
-  originalSearchBarCenter = controller.searchBar.center;
-    
-    TTLOGRECT(originalSearchBarBounds);
-    
-  controller.searchBar.left = 0;
     
 //  if (!self.searchContentsController.navigationController) {
 //    [UIView beginAnimations:nil context:nil];
@@ -175,16 +166,6 @@ static const NSString *MMSearchPauseDelayKey = @"MMSearchPauseDelayKey";
  
 - (void)searchDisplayControllerDidEndSearch:(UISearchDisplayController*)controller {    
   [self resetResults];
-    
-    NSLog(@"width before %f after %f", controller.searchBar.width, originalSearchBarBounds.size.width);
-    
-    controller.searchBar.width = originalSearchBarBounds.size.width;
-    controller.searchBar.height = originalSearchBarBounds.size.height;
-
-//    [UIView beginAnimations:nil context:nil];
-    controller.searchBar.centerX = originalSearchBarCenter.x;
-    controller.searchBar.centerY = originalSearchBarCenter.y;
-//    [UIView commitAnimations];
 }
 
 - (void)searchDisplayController:(UISearchDisplayController *)controller

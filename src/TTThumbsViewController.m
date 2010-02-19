@@ -195,9 +195,7 @@ static CGFloat kThumbnailRowHeight = 79;
     self.navigationBarTintColor = nil;
     self.statusBarStyle = UIStatusBarStyleBlackTranslucent;
 
-    if ([self respondsToSelector:@selector(setWantsFullScreenLayout:)]) {
-      [self setWantsFullScreenLayout:YES];
-    }
+    [self setWantsFullScreenLayout:YES];
   }
   
   return self;
@@ -213,51 +211,28 @@ static CGFloat kThumbnailRowHeight = 79;
 // UIViewController
 
 - (void)loadView {
-    [super loadView];
-
-  CGRect screenFrame = [UIScreen mainScreen].bounds;
-  self.view = [[[TTUnclippedView alloc] initWithFrame:screenFrame] autorelease];
-  self.view.autoresizesSubviews = YES;
-	self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-
-  CGFloat y = [self respondsToSelector:@selector(setWantsFullScreenLayout:)] ? 0 : -TTBarsHeight();
-  CGRect innerFrame = CGRectMake(0, y,
-                                 screenFrame.size.width, screenFrame.size.height + TTBarsHeight());
-  UIView* innerView = [[[UIView alloc] initWithFrame:innerFrame] autorelease];
-  innerView.backgroundColor = TTSTYLEVAR(backgroundColor);
-  [self.view addSubview:innerView];
-  
+  [super loadView];
   CGRect tableFrame = CGRectMake(0, TTBarsHeight(),
-                                 screenFrame.size.width, screenFrame.size.height - TTBarsHeight());
+                                 TTScreenBounds().size.width,  TTScreenBounds().size.height - TTBarsHeight());
   self.tableView = [[[UITableView alloc] initWithFrame:tableFrame
                                          style:UITableViewStylePlain] autorelease];
   self.tableView.rowHeight = kThumbnailRowHeight;
-	self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth
+  self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth
     | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
   self.tableView.backgroundColor = TTSTYLEVAR(backgroundColor);
   self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
   self.tableView.contentInset = UIEdgeInsetsMake(4, 0, 0, 0);
   self.tableView.clipsToBounds = NO;
-  [innerView addSubview:self.tableView];
+  [self.view addSubview:self.tableView];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
   [self suspendLoadingThumbnails:NO];
-
-  if (![self respondsToSelector:@selector(setWantsFullScreenLayout:)]) {
-    if (!self.nextViewController) {
-      self.view.superview.frame = CGRectOffset(self.view.superview.frame, 0, TT_ROW_HEIGHT);
-    }
-  }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
   [super viewWillDisappear:animated];
-
-  if (![self respondsToSelector:@selector(setWantsFullScreenLayout:)]) {
-    self.view.superview.frame = CGRectOffset(self.view.superview.frame, 0, TT_ROW_HEIGHT);
-  }
 }  
 
 - (void)viewDidDisappear:(BOOL)animated {

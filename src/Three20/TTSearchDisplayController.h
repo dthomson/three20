@@ -35,8 +35,6 @@
   TTTableViewController* _searchResultsViewController;
   NSTimer* _pauseTimer;
   BOOL _pausesBeforeSearching;
-  CGRect originalSearchBarBounds;
-  CGPoint originalSearchBarCenter;
 }
 
 @property(nonatomic,retain) TTTableViewController* searchResultsViewController;
