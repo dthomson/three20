@@ -139,6 +139,14 @@
 		BEF341970F8042520027E93C /* TTStyledTextLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = BEF341960F8042520027E93C /* TTStyledTextLabel.h */; };
 		FE15B9BB1015A0D500B5C4E6 /* UIFontAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = FE15B9B91015A0D500B5C4E6 /* UIFontAdditions.h */; };
 		FE15B9BC1015A0D500B5C4E6 /* UIFontAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = FE15B9BA1015A0D500B5C4E6 /* UIFontAdditions.m */; };
+		FE1943191132856300786230 /* TTPostController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE1943151132856300786230 /* TTPostController.m */; };
+		FE19431A1132856300786230 /* TTPopupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE1943161132856300786230 /* TTPopupViewController.m */; };
+		FE19431B1132856300786230 /* TTAlertViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE1943171132856300786230 /* TTAlertViewController.m */; };
+		FE19431C1132856300786230 /* TTActionSheetController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE1943181132856300786230 /* TTActionSheetController.m */; };
+		FE1943201132857200786230 /* TTActionSheetController.h in Headers */ = {isa = PBXBuildFile; fileRef = FE19431D1132857200786230 /* TTActionSheetController.h */; };
+		FE1943211132857200786230 /* TTAlertViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = FE19431E1132857200786230 /* TTAlertViewController.h */; };
+		FE1943221132857200786230 /* TTPostController.h in Headers */ = {isa = PBXBuildFile; fileRef = FE19431F1132857200786230 /* TTPostController.h */; };
+		FE1943241132859700786230 /* TTPopupViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1943231132859700786230 /* TTPopupViewController.h */; };
 		FEEEB54A1112BBF700F62CE4 /* TTSearchDisplayController.h in Headers */ = {isa = PBXBuildFile; fileRef = FEEEB5491112BBF700F62CE4 /* TTSearchDisplayController.h */; };
 		FEF03C0710B39DBA00844C02 /* UIWindowAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = FEF03C0610B39DBA00844C02 /* UIWindowAdditions.m */; };
 		FEF03C0910B39DC900844C02 /* UIWindowAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF03C0810B39DC900844C02 /* UIWindowAdditions.h */; };
@@ -279,6 +287,14 @@
 		BEF341960F8042520027E93C /* TTStyledTextLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTStyledTextLabel.h; path = Three20/TTStyledTextLabel.h; sourceTree = "<group>"; };
 		FE15B9B91015A0D500B5C4E6 /* UIFontAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIFontAdditions.h; path = Three20/UIFontAdditions.h; sourceTree = "<group>"; };
 		FE15B9BA1015A0D500B5C4E6 /* UIFontAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIFontAdditions.m; sourceTree = "<group>"; };
+		FE1943151132856300786230 /* TTPostController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTPostController.m; sourceTree = "<group>"; };
+		FE1943161132856300786230 /* TTPopupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTPopupViewController.m; sourceTree = "<group>"; };
+		FE1943171132856300786230 /* TTAlertViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTAlertViewController.m; sourceTree = "<group>"; };
+		FE1943181132856300786230 /* TTActionSheetController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTActionSheetController.m; sourceTree = "<group>"; };
+		FE19431D1132857200786230 /* TTActionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTActionSheetController.h; path = Three20/TTActionSheetController.h; sourceTree = "<group>"; };
+		FE19431E1132857200786230 /* TTAlertViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTAlertViewController.h; path = Three20/TTAlertViewController.h; sourceTree = "<group>"; };
+		FE19431F1132857200786230 /* TTPostController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTPostController.h; path = Three20/TTPostController.h; sourceTree = "<group>"; };
+		FE1943231132859700786230 /* TTPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTPopupViewController.h; path = Three20/TTPopupViewController.h; sourceTree = "<group>"; };
 		FEEEB5491112BBF700F62CE4 /* TTSearchDisplayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTSearchDisplayController.h; path = Three20/TTSearchDisplayController.h; sourceTree = "<group>"; };
 		FEF03C0610B39DBA00844C02 /* UIWindowAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIWindowAdditions.m; sourceTree = "<group>"; };
 		FEF03C0810B39DC900844C02 /* UIWindowAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIWindowAdditions.h; path = Three20/UIWindowAdditions.h; sourceTree = "<group>"; };
@@ -558,6 +574,14 @@
 		BEF321B30F353B78000DE5D2 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				FE19431D1132857200786230 /* TTActionSheetController.h */,
+				FE1943181132856300786230 /* TTActionSheetController.m */,
+				FE19431E1132857200786230 /* TTAlertViewController.h */,
+				FE1943171132856300786230 /* TTAlertViewController.m */,
+				FE19431F1132857200786230 /* TTPostController.h */,
+				FE1943151132856300786230 /* TTPostController.m */,
+				FE1943231132859700786230 /* TTPopupViewController.h */,
+				FE1943161132856300786230 /* TTPopupViewController.m */,
 				BEF31F6D0F352E64000DE5D2 /* TTViewController.h */,
 				BEF31F570F352E64000DE5D2 /* TTViewController.m */,
 				BEF31F650F352E64000DE5D2 /* TTTableViewController.h */,
@@ -647,6 +671,10 @@
 				FE15B9BB1015A0D500B5C4E6 /* UIFontAdditions.h in Headers */,
 				FEF03C0910B39DC900844C02 /* UIWindowAdditions.h in Headers */,
 				FEEEB54A1112BBF700F62CE4 /* TTSearchDisplayController.h in Headers */,
+				FE1943201132857200786230 /* TTActionSheetController.h in Headers */,
+				FE1943211132857200786230 /* TTAlertViewController.h in Headers */,
+				FE1943221132857200786230 /* TTPostController.h in Headers */,
+				FE1943241132859700786230 /* TTPopupViewController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -757,6 +785,10 @@
 				FE15B9BC1015A0D500B5C4E6 /* UIFontAdditions.m in Sources */,
 				FEF03C0710B39DBA00844C02 /* UIWindowAdditions.m in Sources */,
 				FEFAD2BF11112FAB00F9BE3E /* TTSearchDisplayController.m in Sources */,
+				FE1943191132856300786230 /* TTPostController.m in Sources */,
+				FE19431A1132856300786230 /* TTPopupViewController.m in Sources */,
+				FE19431B1132856300786230 /* TTAlertViewController.m in Sources */,
+				FE19431C1132856300786230 /* TTActionSheetController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

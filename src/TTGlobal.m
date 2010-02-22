@@ -294,3 +294,15 @@ void TTSwapMethods(Class cls, SEL originalSel, SEL newSel) {
   Method newMethod = class_getInstanceMethod(cls, newSel);
   method_exchangeImplementations(originalMethod, newMethod);
 }
+
+CGAffineTransform TTRotateTransformForOrientation(UIInterfaceOrientation orientation) {
+    if (orientation == UIInterfaceOrientationLandscapeLeft) {
+        return CGAffineTransformMakeRotation(M_PI*1.5);
+    } else if (orientation == UIInterfaceOrientationLandscapeRight) {
+        return CGAffineTransformMakeRotation(M_PI/2);
+    } else if (orientation == UIInterfaceOrientationPortraitUpsideDown) {
+        return CGAffineTransformMakeRotation(-M_PI);
+    } else {
+        return CGAffineTransformIdentity;
+    }
+}

@@ -9,6 +9,8 @@ typedef enum {
 
 #define TT_NULL_URL @" "
 
+UIViewController* TTOpenURL(NSString* URL);
+
 @protocol TTNavigationDelegate;
 @class TTViewController;
 

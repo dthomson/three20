@@ -191,6 +191,11 @@ UIInterfaceOrientation TTInterfaceOrientation();
 BOOL TTIsSupportedOrientation(UIInterfaceOrientation orientation);
 
 /**
+ * Returns the rotation transform for a given orientation.
+ */
+CGAffineTransform TTRotateTransformForOrientation(UIInterfaceOrientation orientation);
+
+/**
  * Gets the bounds of the screen with device orientation factored in.
  */
 CGRect TTScreenBounds();

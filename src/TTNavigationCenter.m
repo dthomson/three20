@@ -563,3 +563,11 @@ static TTNavigationCenter* gDefaultCenter = nil;
 }
 
 @end
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// global
+
+UIViewController* TTOpenURL(NSString* URL) {
+    return [[TTNavigationCenter defaultCenter] displayURL:URL animated:YES];
+}
+
