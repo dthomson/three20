@@ -147,6 +147,10 @@
 		FE1943211132857200786230 /* TTAlertViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = FE19431E1132857200786230 /* TTAlertViewController.h */; };
 		FE1943221132857200786230 /* TTPostController.h in Headers */ = {isa = PBXBuildFile; fileRef = FE19431F1132857200786230 /* TTPostController.h */; };
 		FE1943241132859700786230 /* TTPopupViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1943231132859700786230 /* TTPopupViewController.h */; };
+		FE616D00113663B800FFB4D3 /* TTTableHeaderDragRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = FE616CFF113663B800FFB4D3 /* TTTableHeaderDragRefreshView.m */; };
+		FE616D02113663BE00FFB4D3 /* TTTableViewDragRefreshDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FE616D01113663BE00FFB4D3 /* TTTableViewDragRefreshDelegate.m */; };
+		FE616D04113663C600FFB4D3 /* TTTableHeaderDragRefreshView.h in Headers */ = {isa = PBXBuildFile; fileRef = FE616D03113663C600FFB4D3 /* TTTableHeaderDragRefreshView.h */; };
+		FE616D06113663C900FFB4D3 /* TTTableViewDragRefreshDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = FE616D05113663C900FFB4D3 /* TTTableViewDragRefreshDelegate.h */; };
 		FEEEB54A1112BBF700F62CE4 /* TTSearchDisplayController.h in Headers */ = {isa = PBXBuildFile; fileRef = FEEEB5491112BBF700F62CE4 /* TTSearchDisplayController.h */; };
 		FEF03C0710B39DBA00844C02 /* UIWindowAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = FEF03C0610B39DBA00844C02 /* UIWindowAdditions.m */; };
 		FEF03C0910B39DC900844C02 /* UIWindowAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF03C0810B39DC900844C02 /* UIWindowAdditions.h */; };
@@ -295,6 +299,10 @@
 		FE19431E1132857200786230 /* TTAlertViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTAlertViewController.h; path = Three20/TTAlertViewController.h; sourceTree = "<group>"; };
 		FE19431F1132857200786230 /* TTPostController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTPostController.h; path = Three20/TTPostController.h; sourceTree = "<group>"; };
 		FE1943231132859700786230 /* TTPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTPopupViewController.h; path = Three20/TTPopupViewController.h; sourceTree = "<group>"; };
+		FE616CFF113663B800FFB4D3 /* TTTableHeaderDragRefreshView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTTableHeaderDragRefreshView.m; sourceTree = "<group>"; };
+		FE616D01113663BE00FFB4D3 /* TTTableViewDragRefreshDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTTableViewDragRefreshDelegate.m; sourceTree = "<group>"; };
+		FE616D03113663C600FFB4D3 /* TTTableHeaderDragRefreshView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTTableHeaderDragRefreshView.h; path = Three20/TTTableHeaderDragRefreshView.h; sourceTree = "<group>"; };
+		FE616D05113663C900FFB4D3 /* TTTableViewDragRefreshDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTTableViewDragRefreshDelegate.h; path = Three20/TTTableViewDragRefreshDelegate.h; sourceTree = "<group>"; };
 		FEEEB5491112BBF700F62CE4 /* TTSearchDisplayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTSearchDisplayController.h; path = Three20/TTSearchDisplayController.h; sourceTree = "<group>"; };
 		FEF03C0610B39DBA00844C02 /* UIWindowAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIWindowAdditions.m; sourceTree = "<group>"; };
 		FEF03C0810B39DC900844C02 /* UIWindowAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIWindowAdditions.h; path = Three20/UIWindowAdditions.h; sourceTree = "<group>"; };
@@ -379,8 +387,12 @@
 				BE702EF20F43F6800028A119 /* TTTableViewDataSource.m */,
 				BED62FD80F882FD1009923D8 /* TTTableViewDelegate.h */,
 				BED62FDA0F882FE3009923D8 /* TTTableViewDelegate.m */,
+				FE616D03113663C600FFB4D3 /* TTTableHeaderDragRefreshView.h */,
+				FE616D01113663BE00FFB4D3 /* TTTableViewDragRefreshDelegate.m */,
 				BE7EB6540F50D339008A4B05 /* TTTableHeaderView.h */,
 				BE7EB6400F50D30C008A4B05 /* TTTableHeaderView.m */,
+				FE616D05113663C900FFB4D3 /* TTTableViewDragRefreshDelegate.h */,
+				FE616CFF113663B800FFB4D3 /* TTTableHeaderDragRefreshView.m */,
 				BE6E4A530F465243001CE9B4 /* TTTableViewCell.h */,
 				BE6E4A510F465237001CE9B4 /* TTTableViewCell.m */,
 				BE702EFA0F43F9DC0028A119 /* TTTableItem.h */,
@@ -675,6 +687,8 @@
 				FE1943211132857200786230 /* TTAlertViewController.h in Headers */,
 				FE1943221132857200786230 /* TTPostController.h in Headers */,
 				FE1943241132859700786230 /* TTPopupViewController.h in Headers */,
+				FE616D04113663C600FFB4D3 /* TTTableHeaderDragRefreshView.h in Headers */,
+				FE616D06113663C900FFB4D3 /* TTTableViewDragRefreshDelegate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -789,6 +803,8 @@
 				FE19431A1132856300786230 /* TTPopupViewController.m in Sources */,
 				FE19431B1132856300786230 /* TTAlertViewController.m in Sources */,
 				FE19431C1132856300786230 /* TTActionSheetController.m in Sources */,
+				FE616D00113663B800FFB4D3 /* TTTableHeaderDragRefreshView.m in Sources */,
+				FE616D02113663BE00FFB4D3 /* TTTableViewDragRefreshDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
