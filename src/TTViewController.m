@@ -318,6 +318,14 @@
   }
 }
 
+- (NSString*)titleForLoading:(BOOL)reloading {
+    if (reloading) {
+        return TTLocalizedString(@"Updating...", @"");
+    } else {
+        return TTLocalizedString(@"Loading...", @"");
+    }
+}
+
 - (void)updateView {
 }
 

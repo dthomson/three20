@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#import "Three20/TTTableViewVarHeightDelegate.h"
+#import "Three20/TTTableViewDelegate.h"
 
 @class TTTableHeaderDragRefreshView;
 

@@ -20,8 +20,7 @@
 
 #import "Three20/TTTableViewController.h"
 
-#import "Three20/TTGlobalUI.h"
-#import "Three20/TTGlobalStyle.h"
+#import "Three20/TTGlobal.h"
 #import "Three20/TTDefaultStyleSheet.h"
 
 // The number of pixels the table needs to be pulled down by in order to initiate the refresh.
@@ -56,11 +55,11 @@ static const CGFloat kRefreshDeltaY = -65.0f;
     [_controller.tableView addSubview:_headerView];
     
     // Hook up to the model to listen for changes.
-    [controller.model.delegates addObject:self];
+    [controller.dataSource.delegates addObject:self];
     
     // Grab the last refresh date if there is one.
-    if ([_controller.model respondsToSelector:@selector(loadedTime)]) {
-      NSDate* date = [_controller.model performSelector:@selector(loadedTime)];
+    if ([_controller.dataSource respondsToSelector:@selector(loadedTime)]) {
+      NSDate* date = [_controller.dataSource performSelector:@selector(loadedTime)];
       
       if (nil != date) {
         [_headerView setUpdateDate:date];
@@ -73,7 +72,7 @@ static const CGFloat kRefreshDeltaY = -65.0f;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 - (void)dealloc {
-  [_controller.model.delegates removeObject:self];
+  [_controller.dataSource.delegates removeObject:self];
   TT_RELEASE_SAFELY(_headerView);
   
   [super dealloc];
@@ -94,7 +93,7 @@ static const CGFloat kRefreshDeltaY = -65.0f;
     if (_headerView.isFlipped
         && scrollView.contentOffset.y > kRefreshDeltaY
         && scrollView.contentOffset.y < 0.0f
-        && !_controller.model.isLoading) {
+        && !_controller.dataSource.isLoading) {
       [_headerView flipImageAnimated:YES];
       [_headerView setStatus:TTTableHeaderDragRefreshPullToReload];
       
@@ -121,10 +120,9 @@ static const CGFloat kRefreshDeltaY = -65.0f;
   
   // If dragging ends and we are far enough to be fully showing the header view trigger a
   // load as long as we arent loading already
-  if (scrollView.contentOffset.y <= kRefreshDeltaY && !_controller.model.isLoading) {
-    [[NSNotificationCenter defaultCenter]
-     postNotificationName:@"DragRefreshTableReload" object:nil];
-    [_controller.model load:TTURLRequestCachePolicyNetwork more:NO];
+  if (scrollView.contentOffset.y <= kRefreshDeltaY && !_controller.dataSource.isLoading) {
+    // Use TTURLRequestCachePolicyNoCache to force a refresh
+    [_controller.dataSource load:TTURLRequestCachePolicyNoCache nextPage:NO];
   }
   
   _isDragging = NO;
@@ -136,62 +134,54 @@ static const CGFloat kRefreshDeltaY = -65.0f;
 #pragma mark -
 #pragma mark TTModelDelegate
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-- (void)modelDidStartLoad:(id<TTModel>)model {
-  [_headerView showActivity:YES];
-  
-  [UIView beginAnimations:nil context:NULL];
-  [UIView setAnimationDuration:ttkDefaultFastTransitionDuration];
-  _controller.tableView.contentInset = UIEdgeInsetsMake(60.0f, 0.0f, 00.0f, 0.0f);
-  [UIView commitAnimations];
-}
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-- (void)modelDidFinishLoad:(id<TTModel>)model {
-  [_headerView flipImageAnimated:NO];
-  [_headerView setStatus:TTTableHeaderDragRefreshReleaseToReload];
-  [_headerView showActivity:NO];
-  
-  [UIView beginAnimations:nil context:NULL];
-  [UIView setAnimationDuration:ttkDefaultTransitionDuration];
-  _controller.tableView.contentInset = UIEdgeInsetsZero;
-  [UIView commitAnimations];
-  
-  if ([model respondsToSelector:@selector(loadedTime)]) {
-    NSDate* date = [model performSelector:@selector(loadedTime)];
-    [_headerView setUpdateDate:date];
+- (void)dataSourceDidStartLoad:(id<TTTableViewDataSource>)dataSource {
+    [_headerView showActivity:YES];
     
-  } else {
-    [_headerView setCurrentDate];
-  }
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration:TT_TRANSITION_DURATION];
+    _controller.tableView.contentInset = UIEdgeInsetsMake(60.0f, 0.0f, 00.0f, 0.0f);
+    [UIView commitAnimations];
 }
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-- (void)model:(id<TTModel>)model didFailLoadWithError:(NSError*)error {
-  [_headerView flipImageAnimated:NO];
-  [_headerView setStatus:TTTableHeaderDragRefreshReleaseToReload];
-  [_headerView showActivity:NO];
-  
-  [UIView beginAnimations:nil context:NULL];
-  [UIView setAnimationDuration:ttkDefaultTransitionDuration];
-  _controller.tableView.contentInset = UIEdgeInsetsZero;
-  [UIView commitAnimations];
+- (void)dataSourceDidFinishLoad:(id<TTTableViewDataSource>)dataSource {
+    [_headerView flipImageAnimated:NO];
+    [_headerView setStatus:TTTableHeaderDragRefreshReleaseToReload];
+    [_headerView showActivity:NO];
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration:TT_TRANSITION_DURATION];
+    _controller.tableView.contentInset = UIEdgeInsetsZero;
+    [UIView commitAnimations];
+    
+    if ([_controller.dataSource respondsToSelector:@selector(loadedTime)]) {
+        NSDate* date = [_controller.dataSource performSelector:@selector(loadedTime)];
+        [_headerView setUpdateDate:date];
+        
+    } else {
+        [_headerView setCurrentDate];
+    }
 }
 
+- (void)dataSource:(id<TTTableViewDataSource>)dataSource didFailLoadWithError:(NSError*)error {
+    [_headerView flipImageAnimated:NO];
+    [_headerView setStatus:TTTableHeaderDragRefreshReleaseToReload];
+    [_headerView showActivity:NO];
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration:TT_TRANSITION_DURATION];
+    _controller.tableView.contentInset = UIEdgeInsetsZero;
+    [UIView commitAnimations];
+}
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-- (void)modelDidCancelLoad:(id<TTModel>)model {
-  [_headerView flipImageAnimated:NO];
-  [_headerView setStatus:TTTableHeaderDragRefreshReleaseToReload];
-  [_headerView showActivity:NO];
-  
-  [UIView beginAnimations:nil context:NULL];
-  [UIView setAnimationDuration:ttkDefaultTransitionDuration];
-  _controller.tableView.contentInset = UIEdgeInsetsZero;
-  [UIView commitAnimations];
+- (void)dataSourceDidCancelLoad:(id<TTTableViewDataSource>)dataSource {
+    [_headerView flipImageAnimated:NO];
+    [_headerView setStatus:TTTableHeaderDragRefreshReleaseToReload];
+    [_headerView showActivity:NO];
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration:TT_TRANSITION_DURATION];
+    _controller.tableView.contentInset = UIEdgeInsetsZero;
+    [UIView commitAnimations];
 }
 
 

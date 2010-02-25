@@ -197,6 +197,11 @@ typedef enum {
 /**
  *
  */
+- (NSString*)titleForLoading:(BOOL)reloading;
+
+/**
+ *
+ */
 - (NSString*)titleForActivity;
 
 /**

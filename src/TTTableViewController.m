@@ -16,16 +16,17 @@ static const CGFloat kRefreshingViewHeight = 22;
 @implementation TTTableViewController
 
 @synthesize tableView = _tableView, dataSource = _dataSource,
-            variableHeightRows = _variableHeightRows;
+            variableHeightRows = _variableHeightRows,  menuView = _menuView;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // private
 
 - (void)updateTableDelegate {
-  if (!_tableView.delegate || [_tableView.delegate isKindOfClass:[TTTableViewDelegate class]]) {
+  if (!_tableView.delegate) {
     [_tableDelegate release];
     _tableDelegate = [[self createDelegate] retain];
     
+      // You need to set it to nil before changing it or it won't have any effect
     _tableView.delegate = nil;
     _tableView.delegate = _tableDelegate;
   }
@@ -54,12 +55,18 @@ static const CGFloat kRefreshingViewHeight = 22;
     _dataSource = nil;
     _statusDataSource = nil;
     _tableDelegate = nil;
+    _menuView = nil;
+    _menuCell = nil;
+    _bannerTimer = nil;
     _variableHeightRows = NO;
+    _lastInterfaceOrientation = self.interfaceOrientation;
   }  
   return self;
 }
 
 - (void)dealloc {
+  _tableView.delegate = nil;
+  _tableView.dataSource = nil;
   TT_RELEASE_SAFELY(_tableDelegate);
   [_dataSource.delegates removeObject:self];
   TT_RELEASE_SAFELY(_dataSource);
@@ -279,6 +286,59 @@ static const CGFloat kRefreshingViewHeight = 22;
   } else {
     return [[[TTTableViewDelegate alloc] initWithController:self] autorelease];
   }
+}
+
+- (void)showMenu:(UIView*)view forCell:(UITableViewCell*)cell animated:(BOOL)animated {
+    [self hideMenu:YES];
+    
+    _menuView = [view retain];
+    _menuCell = [cell retain];
+    
+    // Insert the cell below all content subviews
+    [_menuCell.contentView insertSubview:_menuView atIndex:0];
+    
+    if (animated) {
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDuration:TT_FAST_TRANSITION_DURATION];
+        [UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
+    }
+    
+    // Move each content subview down, revealing the menu
+    for (UIView* view in _menuCell.contentView.subviews) {
+        if (view != _menuView) {
+            view.left -= _menuCell.contentView.width;
+        }
+    }
+    
+    if (animated) {
+        [UIView commitAnimations];
+    }
+}
+
+- (void)hideMenu:(BOOL)animated {
+    if (_menuView) {
+        if (animated) {
+            [UIView beginAnimations:nil context:_menuView];
+            [UIView setAnimationDuration:TT_FAST_TRANSITION_DURATION];
+            [UIView setAnimationDelegate:self];
+            [UIView setAnimationDidStopSelector:@selector(hideMenuAnimationDidStop:finished:context:)];
+        }
+        
+        for (UIView* view in _menuCell.contentView.subviews) {
+            if (view != _menuView) {
+                view.left += _menuCell.contentView.width;
+            }
+        }
+        
+        if (animated) {
+            [UIView commitAnimations];
+        } else {
+            [_menuView removeFromSuperview];
+        }
+        
+        TT_RELEASE_SAFELY(_menuView);
+        TT_RELEASE_SAFELY(_menuCell);
+    }
 }
 
 - (void)didSelectObject:(id)object atIndexPath:(NSIndexPath*)indexPath {
