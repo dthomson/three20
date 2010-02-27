@@ -172,28 +172,6 @@ static NSDateFormatter* dayFormatter = nil;
   }
 }
 
-- (NSString*)formatDay:(NSDateComponents*)today yesterday:(NSDateComponents*)yesterday {
-    static NSDateFormatter* formatter = nil;
-    if (!formatter) {
-        formatter = [[NSDateFormatter alloc] init];
-        formatter.dateFormat = TTLocalizedString(@"MMMM d", @"Date format: July 27");
-        formatter.locale = TTCurrentLocale();
-    }
-    
-    NSCalendar* cal = [NSCalendar currentCalendar];
-    NSDateComponents* day = [cal components:NSDayCalendarUnit|NSMonthCalendarUnit|NSYearCalendarUnit
-                                   fromDate:self];
-    
-    if (day.day == today.day && day.month == today.month && day.year == today.year) {
-        return TTLocalizedString(@"Today", @"");
-    } else if (day.day == yesterday.day && day.month == yesterday.month
-               && day.year == yesterday.year) {
-        return TTLocalizedString(@"Yesterday", @"");
-    } else {
-        return [formatter stringFromDate:self];
-    }
-}
-
 - (NSString*)formatMonth {
     static NSDateFormatter* formatter = nil;
     if (!formatter) {
