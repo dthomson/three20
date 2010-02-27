@@ -128,6 +128,29 @@ static NSDateFormatter* dayFormatter = nil;
   }
 }
 
+- (NSString*)formatShortRelativeTime {
+    NSTimeInterval elapsed = abs([self timeIntervalSinceNow]);
+    
+    if (elapsed < TT_MINUTE) {
+        return TTLocalizedString(@"<1m", @"Date format: less than one minute ago");
+        
+    } else if (elapsed < TT_HOUR) {
+        int mins = (int)(elapsed / TT_MINUTE);
+        return [NSString stringWithFormat:TTLocalizedString(@"%dm", @"Date format: 50m"), mins];
+        
+    } else if (elapsed < TT_DAY) {
+        int hours = (int)((elapsed + TT_HOUR / 2) / TT_HOUR);
+        return [NSString stringWithFormat:TTLocalizedString(@"%dh", @"Date format: 3h"), hours];
+        
+    } else if (elapsed < TT_WEEK) {
+        int day = (int)((elapsed + TT_DAY / 2) / TT_DAY);
+        return [NSString stringWithFormat:TTLocalizedString(@"%dd", @"Date format: 3d"), day];
+        
+    } else {
+        return [self formatShortTime];
+    }
+}
+
 - (NSString*)formatDay:(NSDateComponents*)today yesterday:(NSDateComponents*)yesterday {
   if (!dayFormatter) {
     dayFormatter = [[NSDateFormatter alloc] init];
@@ -147,6 +170,48 @@ static NSDateFormatter* dayFormatter = nil;
   } else {
     return [dayFormatter stringFromDate:self];
   }
+}
+
+- (NSString*)formatDay:(NSDateComponents*)today yesterday:(NSDateComponents*)yesterday {
+    static NSDateFormatter* formatter = nil;
+    if (!formatter) {
+        formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = TTLocalizedString(@"MMMM d", @"Date format: July 27");
+        formatter.locale = TTCurrentLocale();
+    }
+    
+    NSCalendar* cal = [NSCalendar currentCalendar];
+    NSDateComponents* day = [cal components:NSDayCalendarUnit|NSMonthCalendarUnit|NSYearCalendarUnit
+                                   fromDate:self];
+    
+    if (day.day == today.day && day.month == today.month && day.year == today.year) {
+        return TTLocalizedString(@"Today", @"");
+    } else if (day.day == yesterday.day && day.month == yesterday.month
+               && day.year == yesterday.year) {
+        return TTLocalizedString(@"Yesterday", @"");
+    } else {
+        return [formatter stringFromDate:self];
+    }
+}
+
+- (NSString*)formatMonth {
+    static NSDateFormatter* formatter = nil;
+    if (!formatter) {
+        formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = TTLocalizedString(@"MMMM", @"Date format: July");
+        formatter.locale = TTCurrentLocale();
+    }
+    return [formatter stringFromDate:self];
+}
+
+- (NSString*)formatYear {
+    static NSDateFormatter* formatter = nil;
+    if (!formatter) {
+        formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = TTLocalizedString(@"yyyy", @"Date format: 2009");
+        formatter.locale = TTCurrentLocale();
+    }
+    return [formatter stringFromDate:self];
 }
 
 @end
