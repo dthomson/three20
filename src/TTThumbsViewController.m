@@ -134,7 +134,7 @@ static CGFloat kThumbnailRowHeight = 79;
     return [TTTableMoreButton itemWithText:text caption:caption];
   } else {
     return [_controller.photoSource photoAtIndex:indexPath.row * kColumnCount];
-  }
+  }    
 }
 
 - (Class)tableView:(UITableView*)tableView cellClassForObject:(id)object {
