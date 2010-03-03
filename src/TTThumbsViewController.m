@@ -5,6 +5,7 @@
 #import "Three20/TTTableItem.h"
 #import "Three20/TTURLCache.h"
 #import "Three20/TTStyleSheet.h"
+#import "Three20/TTTableViewDelegate.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // global
@@ -124,13 +125,13 @@ static CGFloat kThumbnailRowHeight = 79;
   return _controller.photoSource.isEmpty;
 }
 
+
 - (id)tableView:(UITableView*)tableView objectForRowAtIndexPath:(NSIndexPath*)indexPath {
   if (indexPath.row == [tableView numberOfRowsInSection:0]-1 && self.hasMoreToLoad) {
     NSString* text = TTLocalizedString(@"Load More Photos...", @"");
     NSString* caption = [NSString stringWithFormat:
       TTLocalizedString(@"Showing %d of %d Photos", @""), _controller.photoSource.maxPhotoIndex+1,
       _controller.photoSource.numberOfPhotos];
-
     return [TTTableMoreButton itemWithText:text caption:caption];
   } else {
     return [_controller.photoSource photoAtIndex:indexPath.row * kColumnCount];
@@ -220,6 +221,8 @@ static CGFloat kThumbnailRowHeight = 79;
   self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth
     | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
   self.tableView.backgroundColor = TTSTYLEVAR(backgroundColor);
+//  self.tableView.backgroundColor = [UIColor redColor];
+
   self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
   self.tableView.contentInset = UIEdgeInsetsMake(4, 0, 0, 0);
   self.tableView.clipsToBounds = NO;

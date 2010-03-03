@@ -281,7 +281,7 @@ static const CGFloat kRefreshingViewHeight = 22;
 }
 
 - (id<UITableViewDelegate>)createDelegate {
-  if (_variableHeightRows || _statusDataSource) {
+  if (_variableHeightRows) {
     return [[[TTTableViewVarHeightDelegate alloc] initWithController:self] autorelease];
   } else {
     return [[[TTTableViewDelegate alloc] initWithController:self] autorelease];
