@@ -120,7 +120,7 @@ static const CGFloat kRefreshDeltaY = -65.0f;
   
   // If dragging ends and we are far enough to be fully showing the header view trigger a
   // load as long as we arent loading already
-  if (scrollView.contentOffset.y <= kRefreshDeltaY && !_controller.dataSource.isLoading && _controller.dataSource.loadedTime && !_controller.dataSource.isLoadingMore) {
+  if (scrollView.contentOffset.y <= kRefreshDeltaY && (!_controller.dataSource.isLoading && _controller.dataSource.loadedTime && !_controller.dataSource.isLoadingMore || (_controller.viewState & TTViewDataLoadedError) == TTViewDataLoadedError  || (_controller.viewState & TTViewEmpty) == TTViewEmpty)) {
     // Use TTURLRequestCachePolicyNoCache to force a refresh
     [_controller.dataSource load:TTURLRequestCachePolicyNoCache nextPage:NO];
   }
