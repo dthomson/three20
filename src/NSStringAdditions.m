@@ -110,7 +110,19 @@
       NSString* value = [[kvPair objectAtIndex:1]
                          stringByReplacingPercentEscapesUsingEncoding:encoding];
       [pairs setObject:value forKey:key];
-    }
+	} 
+	else if (kvPair.count > 2) {
+		NSString* key = [[kvPair objectAtIndex:0]
+						 stringByReplacingPercentEscapesUsingEncoding:encoding];
+		NSString* value = [kvPair objectAtIndex:1];
+		for (NSUInteger i = 2; i < kvPair.count; i++) {
+			value = [[value stringByAppendingString:@"="] stringByAppendingString:[kvPair objectAtIndex:i]];
+		}
+		value = [value stringByReplacingPercentEscapesUsingEncoding:encoding];
+		[pairs setObject:value forKey:key];
+	}
+
+
   }
 
   return [NSDictionary dictionaryWithDictionary:pairs];
